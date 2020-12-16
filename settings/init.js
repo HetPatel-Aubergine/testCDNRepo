@@ -187,6 +187,7 @@ getRegistry = async () => {
 }
 
 updateLinkActiveState = () => {
+    let s = new URLSearchParams(window.location.search)
     const activeContentLink = document.querySelector(`#${s.get('content')}`)
 
     if (activeContentLink){
