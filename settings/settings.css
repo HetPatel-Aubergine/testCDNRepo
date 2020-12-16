@@ -207,9 +207,12 @@
   margin-top: 24px;
 }
 
+.m-a-settings .settings-input-container label {
+  font-weight: revert;
+}
+
 .m-a-settings .settings-input-container .settings-input-label {
   color: #4a4a4a;
-  font-weight: revert;
 }
 
 .m-a-settings .settings-input-container .settings-input-label.settings-input-required::after {
