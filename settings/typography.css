@@ -1,0 +1,117 @@
+@font-face {
+  font-family: "freightregular";
+  src: url("https://cdn.jsdelivr.net/gh/HetPatel-Aubergine/testCDNRepo/fonts/Freight Micro Book.otf");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gotham-Book";
+  src: url("https://cdn.jsdelivr.net/gh/HetPatel-Aubergine/testCDNRepo/fonts/gotham_book.ttf");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gotham-Medium";
+  src: url("https://cdn.jsdelivr.net/gh/HetPatel-Aubergine/testCDNRepo/fonts/gotham_book.ttf");
+  font-display: swap;
+}
+
+.font-heading, h1,
+.h1, h2,
+.h2, h3,
+.h3, h4,
+.h4, h5,
+.h5, h6,
+.h6 {
+  font-family: "freightregular", sans-serif;
+}
+
+.font-body, html,
+body, h4,
+.h4, h5,
+.h5, .text-body,
+p {
+  font-family: "Gotham-Book", sans-serif;
+}
+
+.font-medium {
+  font-family: "Gotham-Book", sans-serif;
+  font-weight: 700;
+}
+
+h1,
+.h1 {
+  margin-bottom: 0;
+}
+
+h2,
+.h2 {
+  margin-bottom: 0;
+}
+
+h3,
+.h3 {
+  margin-bottom: 0;
+}
+
+h4,
+.h4 {
+  margin-bottom: 0;
+}
+
+h5,
+.h5 {
+  margin-bottom: 0;
+}
+
+h6,
+.h6 {
+  margin-bottom: 0;
+}
+
+p {
+  margin-bottom: 0;
+}
+
+h1,
+.h1 {
+  font-size: 32px;
+  line-height: 36px;
+  letter-spacing: 0.85px;
+}
+
+h2,
+.h2 {
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: 0.5px;
+}
+
+h3,
+.h3 {
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: 0.5px;
+}
+
+h4,
+.h4 {
+  font-size: 18px;
+  line-height: 28px;
+  letter-spacing: normal;
+}
+
+.text-body,
+p {
+  font-size: 15px;
+  line-height: 24px;
+  letter-spacing: normal;
+}
+
+.text-sm,
+.text-sm p {
+  font-size: 13px;
+  line-height: 16px;
+  letter-spacing: normal;
+}
+/*# sourceMappingURL=typography.css.map */
