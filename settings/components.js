@@ -941,7 +941,7 @@ class RegistryDetail extends React.Component {
                                         <div className="settings-input-container">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Registry Name</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.registryErrors.registryName ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.registryErrors.registryName ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.registryName}
                                                 onChange={(ev) => this.registryNameChangeHandler(ev)}
                                                 type="text"
@@ -974,12 +974,12 @@ class RegistryDetail extends React.Component {
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Link</label>
                                             <div className={["settings-input-registry-link-section", this.state.registryErrors.registryLink ? 'settings-input-error' : ''].join(" ")}>
                                                 <input
-                                                    className={["settings-input-registry-link text-body"].join(" ")}
+                                                    className={["settings-input-registry-link text-body d-inline-block mb-0"].join(" ")}
                                                     value={REGISTRY_PAGE}
                                                     disabled={true}
                                                     type="text" />
                                                 <input
-                                                    className={["settings-input-registry-link text-body"].join(" ")}
+                                                    className={["settings-input-registry-link text-body mb-0 d-inline-block"].join(" ")}
                                                     value={this.state.registryLink}
                                                     onChange={(ev) => this.registryLinkChangeHandler(ev)}
                                                     type="text"
@@ -1239,7 +1239,7 @@ class RegistryDetail extends React.Component {
                                         <div className="settings-input-container">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">First Name</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.partnerErrors.partnerFirstName ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.partnerErrors.partnerFirstName ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.partnerFirstName}
                                                 onChange={(ev) => this.partnerFirstNameChangeHandler(ev)}
                                                 type="text"
@@ -1253,7 +1253,7 @@ class RegistryDetail extends React.Component {
                                         <div className="settings-input-container">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Last Name</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.partnerErrors.partnerLastName ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.partnerErrors.partnerLastName ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.partnerLastName}
                                                 onChange={(ev) => this.partnerLastNameChangeHandler(ev)}
                                                 type="text"
@@ -1270,7 +1270,7 @@ class RegistryDetail extends React.Component {
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Email</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.partnerErrors.partnerEmail ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.partnerErrors.partnerEmail ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.partnerEmail}
                                                 onChange={(ev) => this.partnerEmailChangeHandler(ev)}
                                                 type="text"
@@ -1900,7 +1900,7 @@ class BankDetail extends React.Component {
                                         <div className="settings-input-container">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Routing Number (9 digits)</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.bankAccountErrors.routingNumber ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.routingNumber ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.routingNumber}
                                                 onChange={(ev) => this.routingNumberChangeHandler(ev)}
                                                 type="text"
@@ -1916,7 +1916,7 @@ class BankDetail extends React.Component {
                                         <div className="settings-input-container">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Account Number (3-17 Digits)</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.bankAccountErrors.accountNumber ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.accountNumber ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.accountNumber}
                                                 onChange={(ev) => this.accountNumberChangeHandler(ev)}
                                                 type="text"
@@ -1935,7 +1935,7 @@ class BankDetail extends React.Component {
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">First Name</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.bankAccountErrors.firstName ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.firstName ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.firstName}
                                                 onChange={(ev) => this.firstNameChangeHandler(ev)}
                                                 type="text"
@@ -1951,7 +1951,7 @@ class BankDetail extends React.Component {
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Last Name</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.bankAccountErrors.lastName ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.lastName ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.lastName}
                                                 onChange={(ev) => this.lastNameChangeHandler(ev)}
                                                 type="text"
@@ -1971,7 +1971,7 @@ class BankDetail extends React.Component {
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Address Line 1</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.bankAccountErrors.addressLine1 ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.addressLine1 ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.addressLine1}
                                                 onChange={(ev) => this.addressLine1ChangeHandler(ev)}
                                                 type="text"
@@ -1987,7 +1987,7 @@ class BankDetail extends React.Component {
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label text-sm font-medium m-0">Address Line 2</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.bankAccountErrors.addressLine2 ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.addressLine2 ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.addressLine2}
                                                 onChange={(ev) => this.addressLine2ChangeHandler(ev)}
                                                 type="text"
@@ -2006,7 +2006,7 @@ class BankDetail extends React.Component {
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">City</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.bankAccountErrors.city ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.city ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.city}
                                                 onChange={(ev) => this.cityChangeHandler(ev)}
                                                 type="text"
@@ -2022,7 +2022,7 @@ class BankDetail extends React.Component {
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Country</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.bankAccountErrors.country ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.country ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.country}
                                                 type="text"
                                                 disabled={true}
@@ -2040,7 +2040,7 @@ class BankDetail extends React.Component {
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">State / Province</label>
                                             {/* TODO: Change this to State/Province Dropdown */}
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.bankAccountErrors.stateProvince ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.stateProvince ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.stateProvince}
                                                 onChange={(ev) => this.stateProvinceChangeHandler(ev)}
                                                 type="text"
@@ -2056,7 +2056,7 @@ class BankDetail extends React.Component {
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Postal / Zip Code</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.bankAccountErrors.postalCode ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.postalCode ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.postalCode}
                                                 onChange={(ev) => this.postalCodeChangeHandler(ev)}
                                                 type="text"
@@ -2075,7 +2075,7 @@ class BankDetail extends React.Component {
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Phone</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.bankAccountErrors.phone ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.phone ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.phone}
                                                 onChange={(ev) => this.phoneChangeHandler(ev)}
                                                 type="text"
@@ -2090,7 +2090,7 @@ class BankDetail extends React.Component {
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Date of Birth</label>
                                             <input
-                                                className={["settings-input text-body mw-100 w-100", this.state.bankAccountErrors.dateOfBirth ? 'settings-input-error' : ''].join(" ")}
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.dateOfBirth ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.dateOfBirth}
                                                 onChange={(ev) => this.dateOfBirthChangeHandler(ev)}
                                                 type="text"
@@ -2395,7 +2395,7 @@ class MyDetail extends React.Component {
                                     <div className="settings-input-container">
                                         <label className="settings-input-label settings-input-required text-sm font-medium m-0">First Name</label>
                                         <input
-                                            className={["settings-input text-body mw-100 w-100", this.state.accountErrors.firstName ? 'settings-input-error' : ''].join(" ")}
+                                            className={["settings-input text-body mw-100 w-100 mb-0", this.state.accountErrors.firstName ? 'settings-input-error' : ''].join(" ")}
                                             value={this.state.accountFirstName}
                                             onChange={(ev) => this.firstNameChangeHandler(ev)}
                                             type="text"
@@ -2409,7 +2409,7 @@ class MyDetail extends React.Component {
                                     <div className="settings-input-container">
                                         <label className="settings-input-label settings-input-required text-sm font-medium m-0">Last Name</label>
                                         <input
-                                            className={["settings-input text-body mw-100 w-100", this.state.accountErrors.lastName ? 'settings-input-error' : ''].join(" ")}
+                                            className={["settings-input text-body mw-100 w-100 mb-0", this.state.accountErrors.lastName ? 'settings-input-error' : ''].join(" ")}
                                             value={this.state.accountLastName}
                                             onChange={(ev) => this.lastNameChangeHandler(ev)}
                                             type="text"
@@ -2426,7 +2426,7 @@ class MyDetail extends React.Component {
                                     <div className="settings-input-container input-container-margin">
                                         <label className="settings-input-label settings-input-required text-sm font-medium m-0">Email</label>
                                         <input
-                                            className={["settings-input text-body mw-100 w-100", this.state.accountErrors.email ? 'settings-input-error' : ''].join(" ")}
+                                            className={["settings-input text-body mw-100 w-100 mb-0", this.state.accountErrors.email ? 'settings-input-error' : ''].join(" ")}
                                             value={this.state.accountEmail}
                                             // onChange={(ev) => this.emailChangeHandler(ev)}
                                             disabled={true}

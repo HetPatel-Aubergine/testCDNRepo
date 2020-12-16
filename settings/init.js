@@ -186,6 +186,17 @@ getRegistry = async () => {
     return registryData;
 }
 
+updateLinkActiveState = () => {
+    const activeContentLink = document.querySelector(`#${s.get('content')}`)
+
+    if (activeContentLink){
+        activeContentLink.classList.toggle('font-medium')
+    } else {
+        const defaultLink = document.querySelector(`#default-link`)
+        defaultLink.classList.toggle('font-medium')
+    }
+}
+
 getRegistry().then(res => {
     if (res.id){
         // Loading Sidebar registry links only if user have registry
@@ -196,4 +207,6 @@ getRegistry().then(res => {
         <a href="?content=bank-detail" id="bank-detail" class="settings-sidebar-link d-block text-body">Bank Details</a>
         `
     }
+
+    updateLinkActiveState()
 })
