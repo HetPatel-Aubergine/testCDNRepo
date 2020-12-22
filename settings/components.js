@@ -142,6 +142,7 @@ var ADD_BANK_ACCOUNT = `
             accountNumber,
             firstName,
             lastName,
+            bankAccountType,
             addressLine1,
             addressLine2,
             city,
@@ -168,6 +169,7 @@ var UPDATE_BANK_ACCOUNT = `
             lastName,
             addressLine1,
             addressLine2,
+            bankAccountType,
             city,
             province,
             country,
@@ -317,6 +319,7 @@ const CheckBox = (props) => {
 class RegistryDetail extends React.Component {
 
     EMAIL_RE = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
+    ALPHABET = /^[A-Za-z]+$/g
 
     state = {
         userInfo: {},
@@ -421,6 +424,7 @@ class RegistryDetail extends React.Component {
             registryGreetings: this.state.registry.greeting,
             isPublic: this.state.registry.isPublic,
             editRegistryDetail: true,
+            editRegistryDetailChanged: false
         })
     }
 
@@ -748,29 +752,33 @@ class RegistryDetail extends React.Component {
 
     // Event Handler
     partnerFirstNameChangeHandler = (ev) => {
-        let errors = { ...this.state.partnerErrors }
-        if (errors.partnerFirstName) {
-            delete errors.partnerFirstName
-        }
+        if (ev.target.value.match(this.ALPHABET) || ev.target.value.length <= 0) {
+            let errors = { ...this.state.partnerErrors }
+            if (errors.partnerFirstName) {
+                delete errors.partnerFirstName
+            }
 
-        this.setState({
-            partnerFirstName: ev.target.value,
-            partnerErrors: errors,
-            partnerInputChanged: true
-        })
+            this.setState({
+                partnerFirstName: ev.target.value,
+                partnerErrors: errors,
+                partnerInputChanged: true
+            })
+        }
     }
 
     partnerLastNameChangeHandler = (ev) => {
-        let errors = { ...this.state.partnerErrors }
-        if (errors.partnerLastName) {
-            delete errors.partnerLastName
-        }
+        if (ev.target.value.match(this.ALPHABET) || ev.target.value.length <= 0) {
+            let errors = { ...this.state.partnerErrors }
+            if (errors.partnerLastName) {
+                delete errors.partnerLastName
+            }
 
-        this.setState({
-            partnerLastName: ev.target.value,
-            partnerErrors: errors,
-            partnerInputChanged: true
-        })
+            this.setState({
+                partnerLastName: ev.target.value,
+                partnerErrors: errors,
+                partnerInputChanged: true
+            })
+        }
     }
 
     partnerEmailChangeHandler = (ev) => {
@@ -1356,6 +1364,14 @@ class RegistryDetail extends React.Component {
 
 class BankDetail extends React.Component {
     DIGIT = /^[0-9]*$/g
+    ALPHABET = /^[A-Za-z]+$/g
+    // To watch input change handler
+    PHONE_WITH_COUNTRY_CODE = /^\+\d{0,11}$/g
+    PHONE_WITHOUT_COUNTRY_CODE = /^\d{0,10}$/g
+
+    // To validate complete phone number
+    PHONE_WITH_COUNTRY_CODE_COMPLETE = /^\+\d{11}$/g
+    PHONE_WITHOUT_COUNTRY_CODE_COMPLETE = /^\d{10}$/g
 
     state = {
         registry: null,
@@ -1367,29 +1383,555 @@ class BankDetail extends React.Component {
         editBankAccount: false,
         enableSaveButton: false,
         bankAccountErrors: {},
+        accountType: {},
         routingNumber: "",
         accountNumber: "",
+        confirmAccountNumber: "",
         firstName: "",
         lastName: "",
         addressLine1: "",
         addressLine2: "",
         city: "",
-        country: "United States of America",
-        stateProvince: "",
+        country: {
+            "countryName": "United States of America",
+            "countryShortCode": "US",
+        },
+        stateProvince: {},
         postalCode: "",
         phone: "",
         dateOfBirth: "",
-        termsAccepted: false
+        termsAccepted: false,
     }
+
+    // List of Country and Province
+    countryRegionList = [
+        {
+            "countryName": "United States of America",
+            "countryShortCode": "US",
+            "regions": [{
+                "name": "Alabama",
+                "shortCode": "AL"
+            },
+            {
+                "name": "Alaska",
+                "shortCode": "AK"
+            },
+            {
+                "name": "American Samoa",
+                "shortCode": "AS"
+            },
+            {
+                "name": "Arizona",
+                "shortCode": "AZ"
+            },
+            {
+                "name": "Arkansas",
+                "shortCode": "AR"
+            },
+            {
+                "name": "California",
+                "shortCode": "CA"
+            },
+            {
+                "name": "Colorado",
+                "shortCode": "CO"
+            },
+            {
+                "name": "Connecticut",
+                "shortCode": "CT"
+            },
+            {
+                "name": "Delaware",
+                "shortCode": "DE"
+            },
+            {
+                "name": "District of Columbia",
+                "shortCode": "DC"
+            },
+            {
+                "name": "Micronesia",
+                "shortCode": "FM"
+            },
+            {
+                "name": "Florida",
+                "shortCode": "FL"
+            },
+            {
+                "name": "Georgia",
+                "shortCode": "GA"
+            },
+            {
+                "name": "Guam",
+                "shortCode": "GU"
+            },
+            {
+                "name": "Hawaii",
+                "shortCode": "HI"
+            },
+            {
+                "name": "Idaho",
+                "shortCode": "ID"
+            },
+            {
+                "name": "Illinois",
+                "shortCode": "IL"
+            },
+            {
+                "name": "Indiana",
+                "shortCode": "IN"
+            },
+            {
+                "name": "Iowa",
+                "shortCode": "IA"
+            },
+            {
+                "name": "Kansas",
+                "shortCode": "KS"
+            },
+            {
+                "name": "Kentucky",
+                "shortCode": "KY"
+            },
+            {
+                "name": "Louisiana",
+                "shortCode": "LA"
+            },
+            {
+                "name": "Maine",
+                "shortCode": "ME"
+            },
+            {
+                "name": "Marshall Islands",
+                "shortCode": "MH"
+            },
+            {
+                "name": "Maryland",
+                "shortCode": "MD"
+            },
+            {
+                "name": "Massachusetts",
+                "shortCode": "MA"
+            },
+            {
+                "name": "Michigan",
+                "shortCode": "MI"
+            },
+            {
+                "name": "Minnesota",
+                "shortCode": "MN"
+            },
+            {
+                "name": "Mississippi",
+                "shortCode": "MS"
+            },
+            {
+                "name": "Missouri",
+                "shortCode": "MO"
+            },
+            {
+                "name": "Montana",
+                "shortCode": "MT"
+            },
+            {
+                "name": "Nebraska",
+                "shortCode": "NE"
+            },
+            {
+                "name": "Nevada",
+                "shortCode": "NV"
+            },
+            {
+                "name": "New Hampshire",
+                "shortCode": "NH"
+            },
+            {
+                "name": "New Jersey",
+                "shortCode": "NJ"
+            },
+            {
+                "name": "New Mexico",
+                "shortCode": "NM"
+            },
+            {
+                "name": "New York",
+                "shortCode": "NY"
+            },
+            {
+                "name": "North Carolina",
+                "shortCode": "NC"
+            },
+            {
+                "name": "North Dakota",
+                "shortCode": "ND"
+            },
+            {
+                "name": "Northern Mariana Islands",
+                "shortCode": "MP"
+            },
+            {
+                "name": "Ohio",
+                "shortCode": "OH"
+            },
+            {
+                "name": "Oklahoma",
+                "shortCode": "OK"
+            },
+            {
+                "name": "Oregon",
+                "shortCode": "OR"
+            },
+            {
+                "name": "Palau",
+                "shortCode": "PW"
+            },
+            {
+                "name": "Pennsylvania",
+                "shortCode": "PA"
+            },
+            {
+                "name": "Puerto Rico",
+                "shortCode": "PR"
+            },
+            {
+                "name": "Rhode Island",
+                "shortCode": "RI"
+            },
+            {
+                "name": "South Carolina",
+                "shortCode": "SC"
+            },
+            {
+                "name": "South Dakota",
+                "shortCode": "SD"
+            },
+            {
+                "name": "Tennessee",
+                "shortCode": "TN"
+            },
+            {
+                "name": "Texas",
+                "shortCode": "TX"
+            },
+            {
+                "name": "Utah",
+                "shortCode": "UT"
+            },
+            {
+                "name": "Vermont",
+                "shortCode": "VT"
+            },
+            {
+                "name": "Virgin Islands",
+                "shortCode": "VI"
+            },
+            {
+                "name": "Virginia",
+                "shortCode": "VA"
+            },
+            {
+                "name": "Washington",
+                "shortCode": "WA"
+            },
+            {
+                "name": "West Virginia",
+                "shortCode": "WV"
+            },
+            {
+                "name": "Wisconsin",
+                "shortCode": "WI"
+            },
+            {
+                "name": "Wyoming",
+                "shortCode": "WY"
+            },
+            {
+                "name": "Armed Forces Americas",
+                "shortCode": "AA"
+            },
+            {
+                "name": "Armed Forces Europe, Canada, Africa and Middle East",
+                "shortCode": "AE"
+            },
+            {
+                "name": "Armed Forces Pacific",
+                "shortCode": "AP"
+            }
+            ]
+        }
+    ]
+
+    // Bank Account Type
+    bankAccountType = [
+        { value: "CHECKING", label: "Checking" },
+        { value: "SAVINGS", label: "Savings" },
+        { value: "GENERAL_LEDGER", label: "General ledger" },
+        { value: "LOAN", label: "Loan" }
+    ]
+
+    countryRegionList = [
+        {
+            "countryName": "United States of America",
+            "countryShortCode": "US",
+            "regions": [{
+                "name": "Alabama",
+                "shortCode": "AL"
+            },
+            {
+                "name": "Alaska",
+                "shortCode": "AK"
+            },
+            {
+                "name": "American Samoa",
+                "shortCode": "AS"
+            },
+            {
+                "name": "Arizona",
+                "shortCode": "AZ"
+            },
+            {
+                "name": "Arkansas",
+                "shortCode": "AR"
+            },
+            {
+                "name": "California",
+                "shortCode": "CA"
+            },
+            {
+                "name": "Colorado",
+                "shortCode": "CO"
+            },
+            {
+                "name": "Connecticut",
+                "shortCode": "CT"
+            },
+            {
+                "name": "Delaware",
+                "shortCode": "DE"
+            },
+            {
+                "name": "District of Columbia",
+                "shortCode": "DC"
+            },
+            {
+                "name": "Micronesia",
+                "shortCode": "FM"
+            },
+            {
+                "name": "Florida",
+                "shortCode": "FL"
+            },
+            {
+                "name": "Georgia",
+                "shortCode": "GA"
+            },
+            {
+                "name": "Guam",
+                "shortCode": "GU"
+            },
+            {
+                "name": "Hawaii",
+                "shortCode": "HI"
+            },
+            {
+                "name": "Idaho",
+                "shortCode": "ID"
+            },
+            {
+                "name": "Illinois",
+                "shortCode": "IL"
+            },
+            {
+                "name": "Indiana",
+                "shortCode": "IN"
+            },
+            {
+                "name": "Iowa",
+                "shortCode": "IA"
+            },
+            {
+                "name": "Kansas",
+                "shortCode": "KS"
+            },
+            {
+                "name": "Kentucky",
+                "shortCode": "KY"
+            },
+            {
+                "name": "Louisiana",
+                "shortCode": "LA"
+            },
+            {
+                "name": "Maine",
+                "shortCode": "ME"
+            },
+            {
+                "name": "Marshall Islands",
+                "shortCode": "MH"
+            },
+            {
+                "name": "Maryland",
+                "shortCode": "MD"
+            },
+            {
+                "name": "Massachusetts",
+                "shortCode": "MA"
+            },
+            {
+                "name": "Michigan",
+                "shortCode": "MI"
+            },
+            {
+                "name": "Minnesota",
+                "shortCode": "MN"
+            },
+            {
+                "name": "Mississippi",
+                "shortCode": "MS"
+            },
+            {
+                "name": "Missouri",
+                "shortCode": "MO"
+            },
+            {
+                "name": "Montana",
+                "shortCode": "MT"
+            },
+            {
+                "name": "Nebraska",
+                "shortCode": "NE"
+            },
+            {
+                "name": "Nevada",
+                "shortCode": "NV"
+            },
+            {
+                "name": "New Hampshire",
+                "shortCode": "NH"
+            },
+            {
+                "name": "New Jersey",
+                "shortCode": "NJ"
+            },
+            {
+                "name": "New Mexico",
+                "shortCode": "NM"
+            },
+            {
+                "name": "New York",
+                "shortCode": "NY"
+            },
+            {
+                "name": "North Carolina",
+                "shortCode": "NC"
+            },
+            {
+                "name": "North Dakota",
+                "shortCode": "ND"
+            },
+            {
+                "name": "Northern Mariana Islands",
+                "shortCode": "MP"
+            },
+            {
+                "name": "Ohio",
+                "shortCode": "OH"
+            },
+            {
+                "name": "Oklahoma",
+                "shortCode": "OK"
+            },
+            {
+                "name": "Oregon",
+                "shortCode": "OR"
+            },
+            {
+                "name": "Palau",
+                "shortCode": "PW"
+            },
+            {
+                "name": "Pennsylvania",
+                "shortCode": "PA"
+            },
+            {
+                "name": "Puerto Rico",
+                "shortCode": "PR"
+            },
+            {
+                "name": "Rhode Island",
+                "shortCode": "RI"
+            },
+            {
+                "name": "South Carolina",
+                "shortCode": "SC"
+            },
+            {
+                "name": "South Dakota",
+                "shortCode": "SD"
+            },
+            {
+                "name": "Tennessee",
+                "shortCode": "TN"
+            },
+            {
+                "name": "Texas",
+                "shortCode": "TX"
+            },
+            {
+                "name": "Utah",
+                "shortCode": "UT"
+            },
+            {
+                "name": "Vermont",
+                "shortCode": "VT"
+            },
+            {
+                "name": "Virgin Islands",
+                "shortCode": "VI"
+            },
+            {
+                "name": "Virginia",
+                "shortCode": "VA"
+            },
+            {
+                "name": "Washington",
+                "shortCode": "WA"
+            },
+            {
+                "name": "West Virginia",
+                "shortCode": "WV"
+            },
+            {
+                "name": "Wisconsin",
+                "shortCode": "WI"
+            },
+            {
+                "name": "Wyoming",
+                "shortCode": "WY"
+            },
+            {
+                "name": "Armed Forces Americas",
+                "shortCode": "AA"
+            },
+            {
+                "name": "Armed Forces Europe, Canada, Africa and Middle East",
+                "shortCode": "AE"
+            },
+            {
+                "name": "Armed Forces Pacific",
+                "shortCode": "AP"
+            }
+            ]
+        }
+    ]
 
     mandatoryFields = [
         'routingNumber',
         'accountNumber',
+        'confirmAccountNumber',
         'firstName',
         'lastName',
         'addressLine1',
         'city',
-        'stateProvince',
         'postalCode',
         'phone',
         'dateOfBirth',
@@ -1400,15 +1942,20 @@ class BankDetail extends React.Component {
             editBankAccount: true,
             enableSaveButton: false,
             bankAccountErrors: {},
+            accountType: {},
             routingNumber: "",
             accountNumber: "",
+            confirmAccountNumber: "",
             firstName: "",
             lastName: "",
             addressLine1: "",
             addressLine2: "",
             city: "",
-            country: "United States of America",
-            stateProvince: "",
+            country: {
+                "countryName": "United States of America",
+                "countryShortCode": "US",
+            },
+            stateProvince: {},
             postalCode: "",
             phone: "",
             dateOfBirth: "",
@@ -1434,16 +1981,32 @@ class BankDetail extends React.Component {
         })
     }
 
+    getCountry = (countryName) => {
+        let country = this.countryRegionList.find(el => el.countryName === countryName)
+        if (country && country.regions) {
+            country = { ...country }
+            delete country.regions
+        }
+        return country
+    }
+
+    getAccountType = (typeName) => {
+        let type = this.bankAccountType.find(el => el.value === typeName)
+        return type ? type : {}
+    }
+
     checkForSaveBtnState = () => {
         let enableSave = false;
         if (
             this.state.firstName.length > 0 &&
             this.state.lastName.length > 0 &&
+            this.state.accountType.value &&
             this.state.routingNumber.length > 0 &&
             this.state.accountNumber.length > 0 &&
+            this.state.confirmAccountNumber.length > 0 &&
             this.state.addressLine1.length > 0 &&
             this.state.city.length > 0 &&
-            this.state.stateProvince.length > 0 &&
+            this.state.stateProvince.name &&
             this.state.postalCode.length > 0 &&
             this.state.phone.length > 0 &&
             this.state.dateOfBirth.length > 0 &&
@@ -1469,6 +2032,11 @@ class BankDetail extends React.Component {
             }
         }
 
+        if (this.state.phone.length > 0 && !(this.state.phone.match(this.PHONE_WITHOUT_COUNTRY_CODE_COMPLETE) || this.state.phone.match(this.PHONE_WITH_COUNTRY_CODE_COMPLETE))) {
+            errors['phone'] = 'Invalid phone number';
+            valid = false
+        }
+
         if (this.state.routingNumber.length > 0 && this.state.routingNumber.length != 9) {
             errors['routingNumber'] = 'Invalid routing number';
             valid = false
@@ -1486,6 +2054,21 @@ class BankDetail extends React.Component {
 
         if (!this.state.termsAccepted) {
             errors['termsAccepted'] = 'Please accept terms and conditions.';
+            valid = false
+        }
+
+        if (!this.state.stateProvince.name) {
+            errors['stateProvince'] = 'This is field is mandatory';
+            valid = false
+        }
+
+        if (!this.state.accountType.value) {
+            errors['accountType'] = 'This is field is mandatory';
+            valid = false
+        }
+
+        if (this.state.accountNumber.length > 0 && this.state.confirmAccountNumber.length > 0 && this.state.accountNumber !== this.state.confirmAccountNumber) {
+            errors['confirmAccountNumber'] = 'Account number is not matching';
             valid = false
         }
 
@@ -1572,13 +2155,17 @@ class BankDetail extends React.Component {
             state2Update = {
                 routingNumber: this.state.bankAccount[0].routingNumber,
                 accountNumber: this.state.bankAccount[0].accountNumber,
+                confirmAccountNumber: "",
+                accountType: this.getAccountType(this.state.bankAccount[0].bankAccountType),
                 firstName: this.state.bankAccount[0].firstName,
                 lastName: this.state.bankAccount[0].lastName,
                 addressLine1: this.state.bankAccount[0].addressLine1,
                 addressLine2: this.state.bankAccount[0].addressLine2,
                 city: this.state.bankAccount[0].city,
-                country: this.state.bankAccount[0].country,
-                stateProvince: this.state.bankAccount[0].province,
+                country: this.getCountry(this.state.bankAccount[0].country),
+                stateProvince: {
+                    name: this.state.bankAccount[0].province
+                },
                 postalCode: this.state.bankAccount[0].zip,
                 phone: this.state.bankAccount[0].phone,
                 dateOfBirth: this.state.bankAccount[0].dateOfBirth,
@@ -1589,6 +2176,24 @@ class BankDetail extends React.Component {
             ...state2Update,
             editBankAccount: true
         })
+    }
+
+    accountTypeChangeHandler = async (value, parentContainerId) => {
+        let errors = { ...this.state.bankAccountErrors }
+        if (errors.accountType) {
+            delete errors.accountType
+        }
+
+        await this.setState({
+            accountType: value,
+            bankAccountErrors: errors
+        })
+        this.checkForSaveBtnState()
+
+        let parentContainer = document.getElementById(parentContainerId)
+        if (parentContainer) {
+            parentContainer.classList.toggle('hide-custom-select-input');
+        }
     }
 
     routingNumberChangeHandler = async (ev) => {
@@ -1621,30 +2226,49 @@ class BankDetail extends React.Component {
         }
     }
 
-    firstNameChangeHandler = async (ev) => {
-        let errors = { ...this.state.bankAccountErrors }
-        if (errors.firstName) {
-            delete errors.firstName
-        }
+    confirmAccountNumberChangeHandler = async (ev) => {
+        if (ev.target.value.match(this.DIGIT)) {
+            let errors = { ...this.state.bankAccountErrors }
+            if (errors.confirmAccountNumber) {
+                delete errors.confirmAccountNumber
+            }
 
-        await this.setState({
-            firstName: ev.target.value,
-            bankAccountErrors: errors
-        })
-        this.checkForSaveBtnState()
+            await this.setState({
+                confirmAccountNumber: ev.target.value,
+                bankAccountErrors: errors
+            })
+            this.checkForSaveBtnState()
+        }
+    }
+
+    firstNameChangeHandler = async (ev) => {
+        if (ev.target.value.match(this.ALPHABET) || ev.target.value.length <= 0) {
+            let errors = { ...this.state.bankAccountErrors }
+            if (errors.firstName) {
+                delete errors.firstName
+            }
+
+            await this.setState({
+                firstName: ev.target.value,
+                bankAccountErrors: errors
+            })
+            this.checkForSaveBtnState()
+        }
     }
 
     lastNameChangeHandler = async (ev) => {
-        let errors = { ...this.state.bankAccountErrors }
-        if (errors.lastName) {
-            delete errors.lastName
-        }
+        if (ev.target.value.match(this.ALPHABET) || ev.target.value.length <= 0) {
+            let errors = { ...this.state.bankAccountErrors }
+            if (errors.lastName) {
+                delete errors.lastName
+            }
 
-        await this.setState({
-            lastName: ev.target.value,
-            bankAccountErrors: errors
-        })
-        this.checkForSaveBtnState()
+            await this.setState({
+                lastName: ev.target.value,
+                bankAccountErrors: errors
+            })
+            this.checkForSaveBtnState()
+        }
     }
 
     addressLine1ChangeHandler = async (ev) => {
@@ -1667,32 +2291,48 @@ class BankDetail extends React.Component {
     }
 
     cityChangeHandler = async (ev) => {
-        let errors = { ...this.state.bankAccountErrors }
-        if (errors.city) {
-            delete errors.city
+        if (ev.target.value.match(this.ALPHABET) || ev.target.value.length <= 0) {
+            let errors = { ...this.state.bankAccountErrors }
+            if (errors.city) {
+                delete errors.city
+            }
+            await this.setState({
+                city: ev.target.value,
+                bankAccountErrors: errors
+            })
+            this.checkForSaveBtnState()
         }
-        await this.setState({
-            city: ev.target.value,
-            bankAccountErrors: errors
-        })
-        this.checkForSaveBtnState()
     }
 
-    stateProvinceChangeHandler = async (ev) => {
+    selectTriggerClickHandler = (parentContainerId) => {
+        let parentContainer = document.getElementById(parentContainerId)
+        if (parentContainer) {
+            if (parentContainer.classList.contains('hide-custom-select-input')) {
+                parentContainer.classList.remove('hide-custom-select-input');
+            }
+        }
+    }
+
+    stateProvinceChangeHandler = async (value, parentContainerId) => {
         let errors = { ...this.state.bankAccountErrors }
         if (errors.stateProvince) {
             delete errors.stateProvince
         }
 
         await this.setState({
-            stateProvince: ev.target.value,
+            stateProvince: value,
             bankAccountErrors: errors
         })
         this.checkForSaveBtnState()
+
+        let parentContainer = document.getElementById(parentContainerId)
+        if (parentContainer) {
+            parentContainer.classList.toggle('hide-custom-select-input');
+        }
     }
 
     postalCodeChangeHandler = async (ev) => {
-        if (ev.target.value.match(this.DIGIT)) {
+        if (ev.target.value.match(this.DIGIT) && ev.target.value.length <= 5) {
             let errors = { ...this.state.bankAccountErrors }
             if (errors.postalCode) {
                 delete errors.postalCode
@@ -1707,7 +2347,7 @@ class BankDetail extends React.Component {
     }
 
     phoneChangeHandler = async (ev) => {
-        if (ev.target.value.match(this.DIGIT)) {
+        if (ev.target.value.match(this.PHONE_WITH_COUNTRY_CODE) || ev.target.value.match(this.PHONE_WITHOUT_COUNTRY_CODE) || ev.target.value.length <= 0) {
             let errors = { ...this.state.bankAccountErrors }
             if (errors.phone) {
                 delete errors.phone
@@ -1765,12 +2405,14 @@ class BankDetail extends React.Component {
                     routingNumber: this.state.routingNumber,
                     accountNumber: this.state.accountNumber,
                     firstName: this.state.firstName,
+                    confirmAccountNumber: this.state.confirmAccountNumber,
                     lastName: this.state.lastName,
                     addressLine1: this.state.addressLine1,
                     addressLine2: this.state.addressLine2,
+                    bankAccountType: String(this.state.accountType.value).toLowerCase(),
                     city: this.state.city,
-                    province: this.state.stateProvince,
-                    country: this.state.country,
+                    province: this.state.stateProvince.name,
+                    country: this.state.country.countryName,
                     zip: this.state.postalCode,
                     phone: this.state.phone,
                     dateOfBirth: this.state.dateOfBirth,
@@ -1785,6 +2427,7 @@ class BankDetail extends React.Component {
         } else {
             mutationCalled = 'updateBankAccount';
             reqData['query'] = window.UPDATE_BANK_ACCOUNT;
+            reqData.variables['bankAccountId'] = this.state.bankAccount[0].id
         }
 
         apiGraphql(reqData).then(res => res.json())
@@ -1823,10 +2466,26 @@ class BankDetail extends React.Component {
 
     render() {
         let bankAccountDetail = []
+        let states = []
+
+        if (this.state.editBankAccount && this.state.country.countryShortCode) {
+            let country = this.countryRegionList.find(el => el.countryShortCode === this.state.country.countryShortCode)
+            if (country && country.regions) {
+                states = [...country.regions]
+            } else {
+                console.error("Unable to fetch country or region")
+            }
+        }
 
         if (this.state.bankAccount && this.state.bankAccount.length > 0) {
+            let accountType = this.getAccountType(this.state.bankAccount[0].bankAccountType)
             // Data to display while listing
             bankAccountDetail = [
+                {
+                    label: (<span>Account Type</span>),
+                    value: accountType.label ? accountType.label : ""
+                }
+                ,
                 {
                     label: (<span>Routing Number<br></br>(9 digits)</span>),
                     value: this.getMaskedNumber(this.state.bankAccount[0].routingNumber)
@@ -1896,8 +2555,27 @@ class BankDetail extends React.Component {
                             <div className="edit-bank-account-section">
 
                                 <div className="row">
+
                                     <div className="col-6">
                                         <div className="settings-input-container">
+                                            <label className="settings-input-label settings-input-required text-sm font-medium m-0">Bank Account Type</label>
+                                            <div className="custom-select-input">
+                                                <button className={["custom-select-trigger w-100 text-left text-body", this.state.bankAccountErrors.accountType ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("bankAccountTypeSelectContainer")}>{this.state.accountType.label ? this.state.accountType.label : "Select account type"}</button>
+                                                <div className="custom-select-container" id="bankAccountTypeSelectContainer">
+                                                    <ul className="custom-select-lists w-100 p-0">
+                                                        {this.bankAccountType.map(accountType => (
+                                                            <li onClick={() => this.accountTypeChangeHandler(accountType, "bankAccountTypeSelectContainer")}>{accountType.label}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            {this.state.bankAccountErrors.accountType ?
+                                                <label className="settings-input-error-message text-sm m-0">{this.state.bankAccountErrors.accountType}</label>
+                                                : null}
+                                        </div>
+                                    </div>
+                                    <div className="col-6">
+                                        <div className="settings-input-container ">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Routing Number (9 digits)</label>
                                             <input
                                                 className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.routingNumber ? 'settings-input-error' : ''].join(" ")}
@@ -1912,14 +2590,17 @@ class BankDetail extends React.Component {
                                                 : null}
                                         </div>
                                     </div>
+                                </div>
+
+                                <div className="row">
                                     <div className="col-6">
-                                        <div className="settings-input-container">
+                                        <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Account Number (3-17 Digits)</label>
                                             <input
                                                 className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.accountNumber ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.accountNumber}
                                                 onChange={(ev) => this.accountNumberChangeHandler(ev)}
-                                                type="text"
+                                                type="password"
                                                 name="account-number"
                                                 min={0}
                                             />
@@ -1928,6 +2609,23 @@ class BankDetail extends React.Component {
                                                 : null}
                                         </div>
                                     </div>
+                                    <div className="col-6">
+                                        <div className="settings-input-container input-container-margin">
+                                            <label className="settings-input-label settings-input-required text-sm font-medium m-0">Confirm Account Number (3-17 Digits)</label>
+                                            <input
+                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.confirmAccountNumber ? 'settings-input-error' : ''].join(" ")}
+                                                value={this.state.confirmAccountNumber}
+                                                onChange={(ev) => this.confirmAccountNumberChangeHandler(ev)}
+                                                type="text"
+                                                name="routing-number"
+                                                min={0}
+                                            />
+                                            {this.state.bankAccountErrors.confirmAccountNumber ?
+                                                <label className="settings-input-error-message text-sm m-0">{this.state.bankAccountErrors.confirmAccountNumber}</label>
+                                                : null}
+                                        </div>
+                                    </div>
+
                                 </div>
 
                                 <div className="row">
@@ -2023,7 +2721,7 @@ class BankDetail extends React.Component {
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Country</label>
                                             <input
                                                 className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.country ? 'settings-input-error' : ''].join(" ")}
-                                                value={this.state.country}
+                                                value={this.state.country.countryName}
                                                 type="text"
                                                 disabled={true}
                                             />
@@ -2039,14 +2737,24 @@ class BankDetail extends React.Component {
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">State / Province</label>
                                             {/* TODO: Change this to State/Province Dropdown */}
-                                            <input
+                                            {/* <input
                                                 className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.stateProvince ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.stateProvince}
                                                 onChange={(ev) => this.stateProvinceChangeHandler(ev)}
                                                 type="text"
                                                 name="state-province"
                                                 min={0}
-                                            />
+                                            /> */}
+                                            <div className="custom-select-input">
+                                                <button className={["custom-select-trigger w-100 text-left text-body", this.state.bankAccountErrors.stateProvince ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("stateSelectContainer")}>{this.state.stateProvince.name ? this.state.stateProvince.name : "Select State/Province"}</button>
+                                                <div className="custom-select-container" id="stateSelectContainer">
+                                                    <ul className="custom-select-lists w-100 p-0">
+                                                        {states.map(state => (
+                                                            <li onClick={() => this.stateProvinceChangeHandler(state, "stateSelectContainer")}>{state.name}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            </div>
                                             {this.state.bankAccountErrors.stateProvince ?
                                                 <label className="settings-input-error-message text-sm m-0">{this.state.bankAccountErrors.stateProvince}</label>
                                                 : null}
@@ -2093,7 +2801,7 @@ class BankDetail extends React.Component {
                                                 className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.dateOfBirth ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.dateOfBirth}
                                                 onChange={(ev) => this.dateOfBirthChangeHandler(ev)}
-                                                type="text"
+                                                type="date"
                                                 name="date-of-birth"
                                                 min={0}
                                             />
@@ -2149,7 +2857,7 @@ class BankDetail extends React.Component {
                             // Listing Bank Account
                             this.state.bankAccount.length <= 0 ?
                                 <div className="no-bank-account">
-                                    <a className="settings-link text-body" href="#" onClick={(ev) => this.editAccountLinkClickHandler(ev)}>Add Bank Details</a>
+                                    <a className="settings-link text-body" href="#" onClick={(ev) => this.editAccountLinkClickHandler(ev)}><u>Add Bank Details</u></a>
                                     <p className="text-body">The bank account entered must be a valid U.S. checking account.</p>
                                 </div>
                                 :
@@ -2210,6 +2918,7 @@ class BankDetail extends React.Component {
 
 class MyDetail extends React.Component {
     EMAIL_RE = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
+    ALPHABET = /^[A-Za-z]+$/g
 
     state = {
         userInfo: {},
@@ -2275,27 +2984,31 @@ class MyDetail extends React.Component {
     }
 
     firstNameChangeHandler = (ev) => {
-        let error = { ...this.state.accountErrors }
-        if (error.firstName) {
-            delete error.firstName
+        if (ev.target.value.match(this.ALPHABET) || ev.target.value.length <= 0) {
+            let error = { ...this.state.accountErrors }
+            if (error.firstName) {
+                delete error.firstName
+            }
+            this.setState({
+                accountFirstName: ev.target.value,
+                accountErrors: error,
+                accountInputChanged: true
+            })
         }
-        this.setState({
-            accountFirstName: ev.target.value,
-            accountErrors: error,
-            accountInputChanged: true
-        })
     }
 
     lastNameChangeHandler = (ev) => {
-        let error = { ...this.state.accountErrors }
-        if (error.lastName) {
-            delete error.lastName
+        if (ev.target.value.match(this.ALPHABET) || ev.target.value.length <= 0) {
+            let error = { ...this.state.accountErrors }
+            if (error.lastName) {
+                delete error.lastName
+            }
+            this.setState({
+                accountLastName: ev.target.value,
+                accountErrors: error,
+                accountInputChanged: true
+            })
         }
-        this.setState({
-            accountLastName: ev.target.value,
-            accountErrors: error,
-            accountInputChanged: true
-        })
     }
 
     // Not updating email

@@ -1,3 +1,8 @@
+.m-a-settings-header {
+  background-color: #ebfefe;
+  padding: 21px 0px;
+}
+
 .m-a-settings {
   margin-top: 36px;
 }
@@ -132,12 +137,15 @@
   top: 0;
   left: 0;
   list-style: none;
+  z-index: 3;
   border-radius: 4px;
   border: solid 1px #000000;
   border-top: none;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   background-color: #ffffff;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
 .m-a-settings .custom-select-input .custom-select-container .custom-select-lists li {

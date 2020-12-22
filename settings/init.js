@@ -49,6 +49,7 @@ var CURRENT_USER = `
                 addressLine1,
                 addressLine2,
                 city,
+                bankAccountType,
                 province,
                 country,
                 zip,
