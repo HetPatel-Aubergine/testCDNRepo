@@ -1373,6 +1373,11 @@ class BankDetail extends React.Component {
     PHONE_WITH_COUNTRY_CODE_COMPLETE = /^\+\d{11}$/g
     PHONE_WITHOUT_COUNTRY_CODE_COMPLETE = /^\d{10}$/g
 
+    MIN_ACCOUNT_NUMBER_LENGTH = 4
+    MAX_ACCOUNT_NUMBER_LENGTH = 17
+    ROUTING_NUMBER_LENGTH = 9
+    PIN_CODE_LENGTH = 5
+
     state = {
         registry: null,
         bankAccount: null,
@@ -1662,10 +1667,10 @@ class BankDetail extends React.Component {
 
     // Bank Account Type
     bankAccountType = [
-        { value: "CHECKING", label: "Checking" },
-        { value: "SAVINGS", label: "Savings" },
-        { value: "GENERAL_LEDGER", label: "General ledger" },
-        { value: "LOAN", label: "Loan" }
+        { value: "CHECKING", label: "Checking", backendValue: "checking" },
+        { value: "SAVINGS", label: "Savings", backendValue: "savings" },
+        { value: "GENERAL_LEDGER", label: "General ledger", backendValue: "general-ledger" },
+        { value: "LOAN", label: "Loan", backendValue: "loan" }
     ]
 
     countryRegionList = [
@@ -2037,17 +2042,17 @@ class BankDetail extends React.Component {
             valid = false
         }
 
-        if (this.state.routingNumber.length > 0 && this.state.routingNumber.length != 9) {
+        if (this.state.routingNumber.length > 0 && this.state.routingNumber.length != this.ROUTING_NUMBER_LENGTH) {
             errors['routingNumber'] = 'Invalid routing number';
             valid = false
         }
 
-        if (this.state.accountNumber.length > 0 && (this.state.accountNumber.length < 3 || this.state.accountNumber.length > 17)) {
+        if (this.state.accountNumber.length > 0 && (this.state.accountNumber.length < this.MIN_ACCOUNT_NUMBER_LENGTH || this.state.accountNumber.length > this.MAX_ACCOUNT_NUMBER_LENGTH)) {
             errors['accountNumber'] = 'Invalid account number';
             valid = false
         }
 
-        if (this.state.postalCode.length > 0 && this.state.postalCode.length != 5) {
+        if (this.state.postalCode.length > 0 && this.state.postalCode.length != this.PIN_CODE_LENGTH) {
             errors['postalCode'] = 'Invalid postal code';
             valid = false
         }
@@ -2332,7 +2337,7 @@ class BankDetail extends React.Component {
     }
 
     postalCodeChangeHandler = async (ev) => {
-        if (ev.target.value.match(this.DIGIT) && ev.target.value.length <= 5) {
+        if (ev.target.value.match(this.DIGIT) && ev.target.value.length <= this.PIN_CODE_LENGTH) {
             let errors = { ...this.state.bankAccountErrors }
             if (errors.postalCode) {
                 delete errors.postalCode
@@ -2409,7 +2414,7 @@ class BankDetail extends React.Component {
                     lastName: this.state.lastName,
                     addressLine1: this.state.addressLine1,
                     addressLine2: this.state.addressLine2,
-                    bankAccountType: String(this.state.accountType.value).toLowerCase(),
+                    bankAccountType: this.state.accountType.backendValue,
                     city: this.state.city,
                     province: this.state.stateProvince.name,
                     country: this.state.country.countryName,
@@ -2444,7 +2449,14 @@ class BankDetail extends React.Component {
 
                 if (res.errors) {
                     for (let error of res.errors) {
-                        toast(error.message, "error")
+                        if (error.errors && error.errors.errors.length > 0) {
+                            for (let err of error.errors.errors) {
+                                toast(err.message, "error")
+                            }
+                        } else {
+                            toast(error.message, "error")
+                        }
+
                     }
                     console.error({ ...res.errors })
                 }
@@ -2487,11 +2499,11 @@ class BankDetail extends React.Component {
                 }
                 ,
                 {
-                    label: (<span>Routing Number<br></br>(9 digits)</span>),
+                    label: (<span>Routing Number<br></br>{`(${this.ROUTING_NUMBER_LENGTH} digits)`}</span>),
                     value: this.getMaskedNumber(this.state.bankAccount[0].routingNumber)
                 },
                 {
-                    label: (<span>Account Number<br></br>(3-17 digits)</span>),
+                    label: (<span>Account Number<br></br>{`(${this.MIN_ACCOUNT_NUMBER_LENGTH}-${this.MAX_ACCOUNT_NUMBER_LENGTH} digits)`}</span>),
                     value: this.getMaskedNumber(this.state.bankAccount[0].accountNumber)
                 },
                 {
@@ -2576,7 +2588,7 @@ class BankDetail extends React.Component {
                                     </div>
                                     <div className="col-6">
                                         <div className="settings-input-container ">
-                                            <label className="settings-input-label settings-input-required text-sm font-medium m-0">Routing Number (9 digits)</label>
+                                            <label className="settings-input-label settings-input-required text-sm font-medium m-0">Routing Number {`(${this.ROUTING_NUMBER_LENGTH} digits)`}</label>
                                             <input
                                                 className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.routingNumber ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.routingNumber}
@@ -2595,7 +2607,7 @@ class BankDetail extends React.Component {
                                 <div className="row">
                                     <div className="col-6">
                                         <div className="settings-input-container input-container-margin">
-                                            <label className="settings-input-label settings-input-required text-sm font-medium m-0">Account Number (3-17 Digits)</label>
+                                            <label className="settings-input-label settings-input-required text-sm font-medium m-0">Account Number {`(${this.MIN_ACCOUNT_NUMBER_LENGTH}-${this.MAX_ACCOUNT_NUMBER_LENGTH} digits)`}</label>
                                             <input
                                                 className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.accountNumber ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.accountNumber}
@@ -2611,7 +2623,7 @@ class BankDetail extends React.Component {
                                     </div>
                                     <div className="col-6">
                                         <div className="settings-input-container input-container-margin">
-                                            <label className="settings-input-label settings-input-required text-sm font-medium m-0">Confirm Account Number (3-17 Digits)</label>
+                                            <label className="settings-input-label settings-input-required text-sm font-medium m-0">Confirm Account Number {`(${this.MIN_ACCOUNT_NUMBER_LENGTH}-${this.MAX_ACCOUNT_NUMBER_LENGTH} digits)`}</label>
                                             <input
                                                 className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.confirmAccountNumber ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.confirmAccountNumber}

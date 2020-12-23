@@ -26,6 +26,7 @@
 
 .m-a-settings .settings-link {
   color: #256e6f !important;
+  text-decoration: underline;
 }
 
 .m-a-settings .radio {
@@ -393,6 +394,14 @@
   padding: 2px 16px;
   border-radius: 50px;
   background-color: #ededee;
+}
+
+.m-a-settings .settings-bank-account .edit-bank-account-section .bank-account-terms {
+  resize: none;
+}
+
+.m-a-settings .settings-bank-account .edit-bank-account-section .bank-account-terms-check-box {
+  color: #3c4049;
 }
 
 .m-a-settings .settings-bank-account .edit-bank-account-section .bank-account-terms {
