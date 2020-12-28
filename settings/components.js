@@ -488,7 +488,7 @@ var GET_ADDRESS = `
 
 var ADD_ADDRESS = `
     mutation addAddress($addressData: AddressInput!){
-        addAddress( 
+        addAddress(
         addressData:$addressData){
         status
         address{
@@ -2449,7 +2449,7 @@ class BankDetail extends React.Component {
                 return (
                     <div className="settings-bank-account">
                         <div className="settings-component-headers">
-                            <h3 className="d-inline-block mr-2">Bank Account</h3>
+                            <h3 className="d-inline-block mr-2">Bank Details</h3>
                             {this.state.bankAccount.length > 0 && !this.state.editBankAccount ?
                                 <div className="d-inline-block">
                                     <a href="#" onClick={(ev) => this.editAccountLinkClickHandler(ev)} className="settings-link text-sm font-medium mr-2">Edit</a>
@@ -3157,7 +3157,7 @@ class ShippingAddress extends React.Component {
                 if (res.data) {
                     let stateAddresses = []
                     if (res.data.addresses && res.data.addresses.edges.length > 0 && res.data.defaultAddress.id) {
-                        
+
                         for (let address of res.data.addresses.edges) {
                             address = address.node;
 
