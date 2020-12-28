@@ -212,121 +212,6 @@
   display: block;
 }
 
-.m-a-settings .settings-input-container.input-container-margin {
-  margin-top: 24px;
-}
-
-.m-a-settings .settings-input-container label {
-  font-weight: revert;
-}
-
-.m-a-settings .settings-input-container .settings-input-label {
-  color: #4a4a4a;
-}
-
-.m-a-settings .settings-input-container .settings-input-label.settings-input-required::after {
-  content: "*";
-  color: #d10e00;
-  margin-left: 1px;
-}
-
-.m-a-settings .settings-input-container .settings-textarea {
-  height: unset !important;
-}
-
-.m-a-settings .settings-input-container .settings-input {
-  line-height: unset !important;
-  /* Firefox */
-}
-
-.m-a-settings .settings-input-container .settings-input::-webkit-outer-spin-button, .m-a-settings .settings-input-container .settings-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.m-a-settings .settings-input-container .settings-input[type=number] {
-  -moz-appearance: textfield;
-}
-
-.m-a-settings .settings-input-container .settings-input-registry-link-section {
-  border-radius: 4px;
-  border: solid 1px #d2d3d5;
-  margin-top: 6px;
-}
-
-.m-a-settings .settings-input-container .settings-input-registry-link-section .settings-input-registry-link {
-  line-height: unset !important;
-  padding: 8px 12px;
-  background-color: #ffffff;
-  outline: none;
-  border: none;
-  width: 55%;
-}
-
-.m-a-settings .settings-input-container .settings-input-registry-link-section .settings-input-registry-link:first-child {
-  width: 45%;
-  border-right: solid 1px #d2d3d5;
-  background-color: #f6f6f6;
-}
-
-.m-a-settings .settings-input-container .settings-input-registry-link-section:hover, .m-a-settings .settings-input-container .settings-input-registry-link-section:active, .m-a-settings .settings-input-container .settings-input-registry-link-section:focus {
-  border-color: #000000;
-}
-
-.m-a-settings .settings-input-container .settings-input, .m-a-settings .settings-input-container .settings-textarea {
-  margin-top: 6px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  border: solid 1px #d2d3d5;
-  background-color: #ffffff;
-  outline: none;
-}
-
-.m-a-settings .settings-input-container .settings-input:disabled, .m-a-settings .settings-input-container .settings-textarea:disabled {
-  background-color: #ededee;
-  border: none !important;
-  color: #4a4a4a !important;
-  opacity: revert !important;
-  cursor: revert !important;
-  pointer-events: revert !important;
-}
-
-.m-a-settings .settings-input-container .settings-input::-webkit-input-placeholder, .m-a-settings .settings-input-container .settings-textarea::-webkit-input-placeholder {
-  color: #7e7f82;
-}
-
-.m-a-settings .settings-input-container .settings-input:-ms-input-placeholder, .m-a-settings .settings-input-container .settings-textarea:-ms-input-placeholder {
-  color: #7e7f82;
-}
-
-.m-a-settings .settings-input-container .settings-input::-ms-input-placeholder, .m-a-settings .settings-input-container .settings-textarea::-ms-input-placeholder {
-  color: #7e7f82;
-}
-
-.m-a-settings .settings-input-container .settings-input::placeholder, .m-a-settings .settings-input-container .settings-textarea::placeholder {
-  color: #7e7f82;
-}
-
-.m-a-settings .settings-input-container .settings-input:hover, .m-a-settings .settings-input-container .settings-input:active, .m-a-settings .settings-input-container .settings-input:focus, .m-a-settings .settings-input-container .settings-textarea:hover, .m-a-settings .settings-input-container .settings-textarea:active, .m-a-settings .settings-input-container .settings-textarea:focus {
-  border-color: #000000;
-}
-
-.m-a-settings .settings-input-container .settings-input-error {
-  border-color: #d10e00 !important;
-}
-
-.m-a-settings .settings-input-container .settings-input-error-message {
-  color: #d10e00;
-}
-
-.m-a-settings .settings-input-container .settings-radio-input {
-  margin-top: 12px;
-}
-
-.m-a-settings .settings-input-container .settings-radio-input:first-child {
-  margin-top: 6px;
-}
-
 .m-a-settings .settings-component-headers {
   margin-bottom: 26px;
 }
@@ -404,12 +289,18 @@
   color: #3c4049;
 }
 
-.m-a-settings .settings-bank-account .edit-bank-account-section .bank-account-terms {
-  resize: none;
+.m-a-settings .shipping-address .shipping-address-default-checkbox {
+  margin-top: 26px;
 }
 
-.m-a-settings .settings-bank-account .edit-bank-account-section .bank-account-terms-check-box {
-  color: #3c4049;
+.m-a-settings .shipping-address .shipping-address-details {
+  margin-top: 22px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #d2d3d5;
+}
+
+.m-a-settings .shipping-address .shipping-address-details .shipping-address-row {
+  margin-top: 8px;
 }
 
 .settings-toast {
@@ -481,11 +372,11 @@
   background-color: #d2d3d5;
 }
 
-.bank-detail-remove-modal-subtext {
+.remove-modal-subtext {
   color: #4a4a4a;
 }
 
-.bank-detail-remove-button, .partner-account-remove-button {
+.bank-detail-remove-button, .partner-account-remove-button, .registry-detail-inline-greeting-save-btn {
   color: #4a4a4a !important;
   padding: 6px 16px;
 }
@@ -514,5 +405,124 @@
 
 .settings-button:disabled {
   background-color: #f6f6f6 !important;
+}
+
+.settings-input-container.input-container-margin {
+  margin-top: 24px;
+}
+
+.settings-input-container label {
+  font-weight: revert;
+}
+
+.settings-input-container .settings-label-subtext {
+  color: #7e7f82;
+}
+
+.settings-input-container .settings-input-label {
+  color: #4a4a4a;
+}
+
+.settings-input-container .settings-input-label.settings-input-required::after {
+  content: "*";
+  color: #d10e00;
+  margin-left: 1px;
+}
+
+.settings-input-container .settings-textarea {
+  height: unset;
+}
+
+.settings-input-container .settings-input {
+  line-height: unset !important;
+  /* Firefox */
+}
+
+.settings-input-container .settings-input::-webkit-outer-spin-button, .settings-input-container .settings-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.settings-input-container .settings-input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.settings-input-container .settings-input-registry-link-section {
+  border-radius: 4px;
+  border: solid 1px #d2d3d5;
+  margin-top: 6px;
+}
+
+.settings-input-container .settings-input-registry-link-section .settings-input-registry-link {
+  line-height: unset !important;
+  padding: 8px 12px;
+  background-color: #ffffff;
+  outline: none;
+  border: none;
+  width: 55%;
+}
+
+.settings-input-container .settings-input-registry-link-section .settings-input-registry-link:first-child {
+  width: 45%;
+  border-right: solid 1px #d2d3d5;
+  background-color: #f6f6f6;
+}
+
+.settings-input-container .settings-input-registry-link-section:hover, .settings-input-container .settings-input-registry-link-section:active, .settings-input-container .settings-input-registry-link-section:focus {
+  border-color: #000000;
+}
+
+.settings-input-container .settings-input, .settings-input-container .settings-textarea {
+  margin-top: 6px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: solid 1px #d2d3d5;
+  background-color: #ffffff;
+  outline: none;
+}
+
+.settings-input-container .settings-input:disabled, .settings-input-container .settings-textarea:disabled {
+  background-color: #ededee;
+  border: none !important;
+  color: #4a4a4a !important;
+  opacity: revert !important;
+  cursor: revert !important;
+  pointer-events: revert !important;
+}
+
+.settings-input-container .settings-input::-webkit-input-placeholder, .settings-input-container .settings-textarea::-webkit-input-placeholder {
+  color: #7e7f82;
+}
+
+.settings-input-container .settings-input:-ms-input-placeholder, .settings-input-container .settings-textarea:-ms-input-placeholder {
+  color: #7e7f82;
+}
+
+.settings-input-container .settings-input::-ms-input-placeholder, .settings-input-container .settings-textarea::-ms-input-placeholder {
+  color: #7e7f82;
+}
+
+.settings-input-container .settings-input::placeholder, .settings-input-container .settings-textarea::placeholder {
+  color: #7e7f82;
+}
+
+.settings-input-container .settings-input:hover, .settings-input-container .settings-input:active, .settings-input-container .settings-input:focus, .settings-input-container .settings-textarea:hover, .settings-input-container .settings-textarea:active, .settings-input-container .settings-textarea:focus {
+  border-color: #000000;
+}
+
+.settings-input-container .settings-input-error {
+  border-color: #d10e00 !important;
+}
+
+.settings-input-container .settings-input-error-message {
+  color: #d10e00;
+}
+
+.settings-input-container .settings-radio-input {
+  margin-top: 12px;
+}
+
+.settings-input-container .settings-radio-input:first-child {
+  margin-top: 6px;
 }
 /*# sourceMappingURL=settings.css.map */

@@ -3,6 +3,262 @@
 // Common Variables
 var REGISTRY_PAGE = `${window.location.host}/pages/registry/`
 
+// List of Country and Province
+var countryRegionList = [
+    {
+        "countryName": "United States",
+        "countryShortCode": "US",
+        "regions": [{
+            "name": "Alabama",
+            "shortCode": "AL"
+        },
+        {
+            "name": "Alaska",
+            "shortCode": "AK"
+        },
+        {
+            "name": "American Samoa",
+            "shortCode": "AS"
+        },
+        {
+            "name": "Arizona",
+            "shortCode": "AZ"
+        },
+        {
+            "name": "Arkansas",
+            "shortCode": "AR"
+        },
+        {
+            "name": "California",
+            "shortCode": "CA"
+        },
+        {
+            "name": "Colorado",
+            "shortCode": "CO"
+        },
+        {
+            "name": "Connecticut",
+            "shortCode": "CT"
+        },
+        {
+            "name": "Delaware",
+            "shortCode": "DE"
+        },
+        {
+            "name": "District of Columbia",
+            "shortCode": "DC"
+        },
+        {
+            "name": "Micronesia",
+            "shortCode": "FM"
+        },
+        {
+            "name": "Florida",
+            "shortCode": "FL"
+        },
+        {
+            "name": "Georgia",
+            "shortCode": "GA"
+        },
+        {
+            "name": "Guam",
+            "shortCode": "GU"
+        },
+        {
+            "name": "Hawaii",
+            "shortCode": "HI"
+        },
+        {
+            "name": "Idaho",
+            "shortCode": "ID"
+        },
+        {
+            "name": "Illinois",
+            "shortCode": "IL"
+        },
+        {
+            "name": "Indiana",
+            "shortCode": "IN"
+        },
+        {
+            "name": "Iowa",
+            "shortCode": "IA"
+        },
+        {
+            "name": "Kansas",
+            "shortCode": "KS"
+        },
+        {
+            "name": "Kentucky",
+            "shortCode": "KY"
+        },
+        {
+            "name": "Louisiana",
+            "shortCode": "LA"
+        },
+        {
+            "name": "Maine",
+            "shortCode": "ME"
+        },
+        {
+            "name": "Marshall Islands",
+            "shortCode": "MH"
+        },
+        {
+            "name": "Maryland",
+            "shortCode": "MD"
+        },
+        {
+            "name": "Massachusetts",
+            "shortCode": "MA"
+        },
+        {
+            "name": "Michigan",
+            "shortCode": "MI"
+        },
+        {
+            "name": "Minnesota",
+            "shortCode": "MN"
+        },
+        {
+            "name": "Mississippi",
+            "shortCode": "MS"
+        },
+        {
+            "name": "Missouri",
+            "shortCode": "MO"
+        },
+        {
+            "name": "Montana",
+            "shortCode": "MT"
+        },
+        {
+            "name": "Nebraska",
+            "shortCode": "NE"
+        },
+        {
+            "name": "Nevada",
+            "shortCode": "NV"
+        },
+        {
+            "name": "New Hampshire",
+            "shortCode": "NH"
+        },
+        {
+            "name": "New Jersey",
+            "shortCode": "NJ"
+        },
+        {
+            "name": "New Mexico",
+            "shortCode": "NM"
+        },
+        {
+            "name": "New York",
+            "shortCode": "NY"
+        },
+        {
+            "name": "North Carolina",
+            "shortCode": "NC"
+        },
+        {
+            "name": "North Dakota",
+            "shortCode": "ND"
+        },
+        {
+            "name": "Northern Mariana Islands",
+            "shortCode": "MP"
+        },
+        {
+            "name": "Ohio",
+            "shortCode": "OH"
+        },
+        {
+            "name": "Oklahoma",
+            "shortCode": "OK"
+        },
+        {
+            "name": "Oregon",
+            "shortCode": "OR"
+        },
+        {
+            "name": "Palau",
+            "shortCode": "PW"
+        },
+        {
+            "name": "Pennsylvania",
+            "shortCode": "PA"
+        },
+        {
+            "name": "Puerto Rico",
+            "shortCode": "PR"
+        },
+        {
+            "name": "Rhode Island",
+            "shortCode": "RI"
+        },
+        {
+            "name": "South Carolina",
+            "shortCode": "SC"
+        },
+        {
+            "name": "South Dakota",
+            "shortCode": "SD"
+        },
+        {
+            "name": "Tennessee",
+            "shortCode": "TN"
+        },
+        {
+            "name": "Texas",
+            "shortCode": "TX"
+        },
+        {
+            "name": "Utah",
+            "shortCode": "UT"
+        },
+        {
+            "name": "Vermont",
+            "shortCode": "VT"
+        },
+        {
+            "name": "Virgin Islands",
+            "shortCode": "VI"
+        },
+        {
+            "name": "Virginia",
+            "shortCode": "VA"
+        },
+        {
+            "name": "Washington",
+            "shortCode": "WA"
+        },
+        {
+            "name": "West Virginia",
+            "shortCode": "WV"
+        },
+        {
+            "name": "Wisconsin",
+            "shortCode": "WI"
+        },
+        {
+            "name": "Wyoming",
+            "shortCode": "WY"
+        },
+        {
+            "name": "Armed Forces Americas",
+            "shortCode": "AA"
+        },
+        {
+            "name": "Armed Forces Europe, Canada, Africa and Middle East",
+            "shortCode": "AE"
+        },
+        {
+            "name": "Armed Forces Pacific",
+            "shortCode": "AP"
+        }
+        ]
+    }
+]
 // Common Functions
 
 const apiGraphql = (reqData) => {
@@ -16,6 +272,25 @@ const apiGraphql = (reqData) => {
         },
         body: JSON.stringify(reqData)
     })
+}
+
+// /api/user/address
+const apiRest = (url, method, reqData) => {
+    let access_token = getCookie(window.CONSTANTS.ACCESS_COOKIE_NAME)
+
+    let options = {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Authorization': `Token ${access_token}`
+        }
+    }
+
+    if (reqData) {
+        options["body"] = JSON.stringify(reqData)
+    }
+
+    return fetch(window.CONSTANTS.BACKEND_ENDPOINT + url, options)
 }
 
 // Mutations
@@ -190,6 +465,58 @@ var REMOVE_BANK_ACCOUNT = `
     }
 `
 
+var GET_ADDRESS = `
+    query{
+        addresses{
+            id,
+            firstName,
+            lastName,
+            address1,
+            address2,
+            city,
+            company,
+            province,
+            country,
+            provinceCode,
+            countryCode,
+            zip,
+            phone,
+            isDefault
+        }
+    }
+`
+
+var ADD_ADDRESS = `
+    mutation addAddress($addressData: AddressInput!){
+        addAddress( 
+        addressData:$addressData){
+        status
+        address{
+            id
+        }
+        }
+    }
+`
+
+var UPDATE_ADDRESS = `
+mutation updateAddress($addressId: Int!, $addressData: AddressInput!){
+    updateAddress(addressId:$addressId,
+    addressData:$addressData){
+      address{
+        id
+      }
+    }
+  }
+`
+
+var REMOVE_ADDRESS = `
+mutation deleteAddress($addressId: ID!){
+    deleteAddress(addressId:$addressId){
+      message
+    }
+  }
+`
+
 // Common Components
 
 const toast = (message, type = "success") => {
@@ -321,6 +648,8 @@ class RegistryDetail extends React.Component {
     EMAIL_RE = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
     ALPHABET = /^[A-Za-z]+$/g
 
+    MAX_GREETINGS_LENGTH = 280
+
     state = {
         userInfo: {},
         registry: null,
@@ -334,6 +663,7 @@ class RegistryDetail extends React.Component {
         registryName: "",
         registryGreetings: "",
         isPublic: false,
+        inlineEditGreetingsShow: false,
 
         // Children
         editChildrenInfo: false,
@@ -414,15 +744,30 @@ class RegistryDetail extends React.Component {
         return valid
     }
 
-    // Event Handler
-    editRegistryDetailClickHandler = (ev) => {
-        ev.preventDefault();
-
-        this.setState({
+    getEditRegistryDetailFields = () => {
+        return {
             registryLink: this.state.registry.urlSlug,
             registryName: this.state.registry.displayName,
             registryGreetings: this.state.registry.greeting,
             isPublic: this.state.registry.isPublic,
+        }
+    }
+
+    // Event Handler
+    addInlineGreetingsClickHandler = (ev) => {
+        ev.preventDefault()
+        let editFieldsDetail = this.getEditRegistryDetailFields()
+        this.setState({
+            ...editFieldsDetail,
+            inlineEditGreetingsShow: true
+        })
+    }
+
+    editRegistryDetailClickHandler = (ev) => {
+        ev.preventDefault();
+        let editFieldsDetail = this.getEditRegistryDetailFields()
+        this.setState({
+            ...editFieldsDetail,
             editRegistryDetail: true,
             editRegistryDetailChanged: false
         })
@@ -442,10 +787,12 @@ class RegistryDetail extends React.Component {
     }
 
     registryGreetingsChangeHandler = (ev) => {
-        this.setState({
-            registryGreetings: ev.target.value,
-            editRegistryDetailChanged: true,
-        })
+        if (ev.target.value.length <= this.MAX_GREETINGS_LENGTH) {
+            this.setState({
+                registryGreetings: ev.target.value,
+                editRegistryDetailChanged: true,
+            })
+        }
     }
 
     registryLinkChangeHandler = (ev) => {
@@ -500,8 +847,14 @@ class RegistryDetail extends React.Component {
                 if (res.data && res.data.updateRegistry) {
                     this.setState({
                         registry: res.data.updateRegistry.registry,
+                        editRegistryDetail: false,
                         registryErrors: {},
-                        editRegistryDetail: false
+                        editRegistryDetailChanged: false,
+                        registryLink: "",
+                        registryName: "",
+                        registryGreetings: "",
+                        isPublic: false,
+                        inlineEditGreetingsShow: false
                     })
                     toast("Registry Detail updated succesfully")
                 }
@@ -836,7 +1189,7 @@ class RegistryDetail extends React.Component {
                             for (let error of res.errors) {
                                 toast(error.message, "error")
                             }
-                            console.log({ ...res.errors })
+                            console.error({ ...res.errors })
                         }
                     })
             } else {
@@ -867,7 +1220,7 @@ class RegistryDetail extends React.Component {
                             for (let error of res.errors) {
                                 toast(error.message, "error")
                             }
-                            console.log({ ...res.errors })
+                            console.error({ ...res.errors })
                         }
                     })
             }
@@ -890,7 +1243,7 @@ class RegistryDetail extends React.Component {
                     for (let error of res.errors) {
                         toast(error.message, "error")
                     }
-                    console.log({ ...res.errors })
+                    console.error({ ...res.errors })
                 }
             })
     }
@@ -915,7 +1268,7 @@ class RegistryDetail extends React.Component {
                     for (let error of res.errors) {
                         toast(error.message, "error")
                     }
-                    console.log({ ...res.errors })
+                    console.error({ ...res.errors })
                 }
             })
     }
@@ -964,7 +1317,10 @@ class RegistryDetail extends React.Component {
                                 <div className="row">
                                     <div className="col-7">
                                         <div className="settings-input-container input-container-margin">
-                                            <label className="settings-input-label text-sm font-medium m-0">Add Greeting</label>
+                                            <div>
+                                                <label className="settings-input-label text-sm font-medium m-0 float-left">Add Greeting</label>
+                                                <span className="settings-label-subtext float-right text-sm">Max. 280 chars</span>
+                                            </div>
                                             <textarea
                                                 className="settings-textarea text-body mw-100 w-100"
                                                 placeholder="Write a greeting for your guests"
@@ -1065,7 +1421,7 @@ class RegistryDetail extends React.Component {
                                             this.state.registry.greeting ?
                                                 <p className="text-sm">{this.state.registry.greeting}</p>
                                                 :
-                                                <a href="#" className="settings-link text-sm d-block" onClick={(ev) => this.editRegistryDetailClickHandler(ev)}>Add</a>
+                                                <a href="#" className="settings-link text-sm d-block" onClick={(ev) => this.addInlineGreetingsClickHandler(ev)}>Add</a>
                                             : null}
                                     </div>
                                 </div>
@@ -1089,6 +1445,60 @@ class RegistryDetail extends React.Component {
                                 </div>
                             </div>
                         }
+                        {this.state.inlineEditGreetingsShow ?
+                            <ModalComponent
+                                show={this.state.inlineEditGreetingsShow}
+                                size="md"
+                                closeModal={() => this.setState({ inlineEditGreetingsShow: false })}
+                                title="Edit Registry Details"
+                                footer={
+                                    <div>
+                                        <Button
+                                            variant="primary"
+                                            onClick={this.saveRegistryDetailClickHandler}
+                                            className="registry-detail-inline-greeting-save-btn text-body font-medium"
+                                        >{`Save & Close`}</Button>
+                                    </div>
+                                }
+                            >
+                                <div>
+                                    <div className="row">
+                                        <div className="col">
+                                            <div className="settings-input-container">
+                                                <label className="settings-input-label settings-input-required text-sm font-medium m-0">Registry Name</label>
+                                                <input
+                                                    className={["settings-input text-body mw-100 w-100 mb-0", this.state.registryErrors.registryName ? 'settings-input-error' : ''].join(" ")}
+                                                    value={this.state.registryName}
+                                                    onChange={(ev) => this.registryNameChangeHandler(ev)}
+                                                    type="text"
+                                                    name="registry-name" />
+                                                {this.state.registryErrors.registryName ?
+                                                    <label className="settings-input-error-message text-sm m-0">{this.state.registryErrors.registryName}</label>
+                                                    : null}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="row">
+                                        <div className="col">
+                                            <div className="settings-input-container input-container-margin">
+                                                <div>
+                                                    <label className="settings-input-label text-sm font-medium m-0 float-left">Add Greeting</label>
+                                                    <span className="settings-label-subtext float-right text-sm">Max. 280 chars</span>
+                                                </div>
+                                                <textarea
+                                                    className="settings-textarea text-body mw-100 w-100"
+                                                    placeholder="Write a greeting for your guests"
+                                                    value={this.state.registryGreetings}
+                                                    name="greeting"
+                                                    onChange={(ev) => this.registryGreetingsChangeHandler(ev)}
+                                                    rows={2} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ModalComponent>
+                            : null}
                     </div>
 
                     {/* Children */}
@@ -1408,525 +1818,12 @@ class BankDetail extends React.Component {
         termsAccepted: false,
     }
 
-    // List of Country and Province
-    countryRegionList = [
-        {
-            "countryName": "United States of America",
-            "countryShortCode": "US",
-            "regions": [{
-                "name": "Alabama",
-                "shortCode": "AL"
-            },
-            {
-                "name": "Alaska",
-                "shortCode": "AK"
-            },
-            {
-                "name": "American Samoa",
-                "shortCode": "AS"
-            },
-            {
-                "name": "Arizona",
-                "shortCode": "AZ"
-            },
-            {
-                "name": "Arkansas",
-                "shortCode": "AR"
-            },
-            {
-                "name": "California",
-                "shortCode": "CA"
-            },
-            {
-                "name": "Colorado",
-                "shortCode": "CO"
-            },
-            {
-                "name": "Connecticut",
-                "shortCode": "CT"
-            },
-            {
-                "name": "Delaware",
-                "shortCode": "DE"
-            },
-            {
-                "name": "District of Columbia",
-                "shortCode": "DC"
-            },
-            {
-                "name": "Micronesia",
-                "shortCode": "FM"
-            },
-            {
-                "name": "Florida",
-                "shortCode": "FL"
-            },
-            {
-                "name": "Georgia",
-                "shortCode": "GA"
-            },
-            {
-                "name": "Guam",
-                "shortCode": "GU"
-            },
-            {
-                "name": "Hawaii",
-                "shortCode": "HI"
-            },
-            {
-                "name": "Idaho",
-                "shortCode": "ID"
-            },
-            {
-                "name": "Illinois",
-                "shortCode": "IL"
-            },
-            {
-                "name": "Indiana",
-                "shortCode": "IN"
-            },
-            {
-                "name": "Iowa",
-                "shortCode": "IA"
-            },
-            {
-                "name": "Kansas",
-                "shortCode": "KS"
-            },
-            {
-                "name": "Kentucky",
-                "shortCode": "KY"
-            },
-            {
-                "name": "Louisiana",
-                "shortCode": "LA"
-            },
-            {
-                "name": "Maine",
-                "shortCode": "ME"
-            },
-            {
-                "name": "Marshall Islands",
-                "shortCode": "MH"
-            },
-            {
-                "name": "Maryland",
-                "shortCode": "MD"
-            },
-            {
-                "name": "Massachusetts",
-                "shortCode": "MA"
-            },
-            {
-                "name": "Michigan",
-                "shortCode": "MI"
-            },
-            {
-                "name": "Minnesota",
-                "shortCode": "MN"
-            },
-            {
-                "name": "Mississippi",
-                "shortCode": "MS"
-            },
-            {
-                "name": "Missouri",
-                "shortCode": "MO"
-            },
-            {
-                "name": "Montana",
-                "shortCode": "MT"
-            },
-            {
-                "name": "Nebraska",
-                "shortCode": "NE"
-            },
-            {
-                "name": "Nevada",
-                "shortCode": "NV"
-            },
-            {
-                "name": "New Hampshire",
-                "shortCode": "NH"
-            },
-            {
-                "name": "New Jersey",
-                "shortCode": "NJ"
-            },
-            {
-                "name": "New Mexico",
-                "shortCode": "NM"
-            },
-            {
-                "name": "New York",
-                "shortCode": "NY"
-            },
-            {
-                "name": "North Carolina",
-                "shortCode": "NC"
-            },
-            {
-                "name": "North Dakota",
-                "shortCode": "ND"
-            },
-            {
-                "name": "Northern Mariana Islands",
-                "shortCode": "MP"
-            },
-            {
-                "name": "Ohio",
-                "shortCode": "OH"
-            },
-            {
-                "name": "Oklahoma",
-                "shortCode": "OK"
-            },
-            {
-                "name": "Oregon",
-                "shortCode": "OR"
-            },
-            {
-                "name": "Palau",
-                "shortCode": "PW"
-            },
-            {
-                "name": "Pennsylvania",
-                "shortCode": "PA"
-            },
-            {
-                "name": "Puerto Rico",
-                "shortCode": "PR"
-            },
-            {
-                "name": "Rhode Island",
-                "shortCode": "RI"
-            },
-            {
-                "name": "South Carolina",
-                "shortCode": "SC"
-            },
-            {
-                "name": "South Dakota",
-                "shortCode": "SD"
-            },
-            {
-                "name": "Tennessee",
-                "shortCode": "TN"
-            },
-            {
-                "name": "Texas",
-                "shortCode": "TX"
-            },
-            {
-                "name": "Utah",
-                "shortCode": "UT"
-            },
-            {
-                "name": "Vermont",
-                "shortCode": "VT"
-            },
-            {
-                "name": "Virgin Islands",
-                "shortCode": "VI"
-            },
-            {
-                "name": "Virginia",
-                "shortCode": "VA"
-            },
-            {
-                "name": "Washington",
-                "shortCode": "WA"
-            },
-            {
-                "name": "West Virginia",
-                "shortCode": "WV"
-            },
-            {
-                "name": "Wisconsin",
-                "shortCode": "WI"
-            },
-            {
-                "name": "Wyoming",
-                "shortCode": "WY"
-            },
-            {
-                "name": "Armed Forces Americas",
-                "shortCode": "AA"
-            },
-            {
-                "name": "Armed Forces Europe, Canada, Africa and Middle East",
-                "shortCode": "AE"
-            },
-            {
-                "name": "Armed Forces Pacific",
-                "shortCode": "AP"
-            }
-            ]
-        }
-    ]
-
     // Bank Account Type
     bankAccountType = [
         { value: "CHECKING", label: "Checking", backendValue: "checking" },
         { value: "SAVINGS", label: "Savings", backendValue: "savings" },
         { value: "GENERAL_LEDGER", label: "General ledger", backendValue: "general-ledger" },
         { value: "LOAN", label: "Loan", backendValue: "loan" }
-    ]
-
-    countryRegionList = [
-        {
-            "countryName": "United States of America",
-            "countryShortCode": "US",
-            "regions": [{
-                "name": "Alabama",
-                "shortCode": "AL"
-            },
-            {
-                "name": "Alaska",
-                "shortCode": "AK"
-            },
-            {
-                "name": "American Samoa",
-                "shortCode": "AS"
-            },
-            {
-                "name": "Arizona",
-                "shortCode": "AZ"
-            },
-            {
-                "name": "Arkansas",
-                "shortCode": "AR"
-            },
-            {
-                "name": "California",
-                "shortCode": "CA"
-            },
-            {
-                "name": "Colorado",
-                "shortCode": "CO"
-            },
-            {
-                "name": "Connecticut",
-                "shortCode": "CT"
-            },
-            {
-                "name": "Delaware",
-                "shortCode": "DE"
-            },
-            {
-                "name": "District of Columbia",
-                "shortCode": "DC"
-            },
-            {
-                "name": "Micronesia",
-                "shortCode": "FM"
-            },
-            {
-                "name": "Florida",
-                "shortCode": "FL"
-            },
-            {
-                "name": "Georgia",
-                "shortCode": "GA"
-            },
-            {
-                "name": "Guam",
-                "shortCode": "GU"
-            },
-            {
-                "name": "Hawaii",
-                "shortCode": "HI"
-            },
-            {
-                "name": "Idaho",
-                "shortCode": "ID"
-            },
-            {
-                "name": "Illinois",
-                "shortCode": "IL"
-            },
-            {
-                "name": "Indiana",
-                "shortCode": "IN"
-            },
-            {
-                "name": "Iowa",
-                "shortCode": "IA"
-            },
-            {
-                "name": "Kansas",
-                "shortCode": "KS"
-            },
-            {
-                "name": "Kentucky",
-                "shortCode": "KY"
-            },
-            {
-                "name": "Louisiana",
-                "shortCode": "LA"
-            },
-            {
-                "name": "Maine",
-                "shortCode": "ME"
-            },
-            {
-                "name": "Marshall Islands",
-                "shortCode": "MH"
-            },
-            {
-                "name": "Maryland",
-                "shortCode": "MD"
-            },
-            {
-                "name": "Massachusetts",
-                "shortCode": "MA"
-            },
-            {
-                "name": "Michigan",
-                "shortCode": "MI"
-            },
-            {
-                "name": "Minnesota",
-                "shortCode": "MN"
-            },
-            {
-                "name": "Mississippi",
-                "shortCode": "MS"
-            },
-            {
-                "name": "Missouri",
-                "shortCode": "MO"
-            },
-            {
-                "name": "Montana",
-                "shortCode": "MT"
-            },
-            {
-                "name": "Nebraska",
-                "shortCode": "NE"
-            },
-            {
-                "name": "Nevada",
-                "shortCode": "NV"
-            },
-            {
-                "name": "New Hampshire",
-                "shortCode": "NH"
-            },
-            {
-                "name": "New Jersey",
-                "shortCode": "NJ"
-            },
-            {
-                "name": "New Mexico",
-                "shortCode": "NM"
-            },
-            {
-                "name": "New York",
-                "shortCode": "NY"
-            },
-            {
-                "name": "North Carolina",
-                "shortCode": "NC"
-            },
-            {
-                "name": "North Dakota",
-                "shortCode": "ND"
-            },
-            {
-                "name": "Northern Mariana Islands",
-                "shortCode": "MP"
-            },
-            {
-                "name": "Ohio",
-                "shortCode": "OH"
-            },
-            {
-                "name": "Oklahoma",
-                "shortCode": "OK"
-            },
-            {
-                "name": "Oregon",
-                "shortCode": "OR"
-            },
-            {
-                "name": "Palau",
-                "shortCode": "PW"
-            },
-            {
-                "name": "Pennsylvania",
-                "shortCode": "PA"
-            },
-            {
-                "name": "Puerto Rico",
-                "shortCode": "PR"
-            },
-            {
-                "name": "Rhode Island",
-                "shortCode": "RI"
-            },
-            {
-                "name": "South Carolina",
-                "shortCode": "SC"
-            },
-            {
-                "name": "South Dakota",
-                "shortCode": "SD"
-            },
-            {
-                "name": "Tennessee",
-                "shortCode": "TN"
-            },
-            {
-                "name": "Texas",
-                "shortCode": "TX"
-            },
-            {
-                "name": "Utah",
-                "shortCode": "UT"
-            },
-            {
-                "name": "Vermont",
-                "shortCode": "VT"
-            },
-            {
-                "name": "Virgin Islands",
-                "shortCode": "VI"
-            },
-            {
-                "name": "Virginia",
-                "shortCode": "VA"
-            },
-            {
-                "name": "Washington",
-                "shortCode": "WA"
-            },
-            {
-                "name": "West Virginia",
-                "shortCode": "WV"
-            },
-            {
-                "name": "Wisconsin",
-                "shortCode": "WI"
-            },
-            {
-                "name": "Wyoming",
-                "shortCode": "WY"
-            },
-            {
-                "name": "Armed Forces Americas",
-                "shortCode": "AA"
-            },
-            {
-                "name": "Armed Forces Europe, Canada, Africa and Middle East",
-                "shortCode": "AE"
-            },
-            {
-                "name": "Armed Forces Pacific",
-                "shortCode": "AP"
-            }
-            ]
-        }
     ]
 
     mandatoryFields = [
@@ -1987,7 +1884,7 @@ class BankDetail extends React.Component {
     }
 
     getCountry = (countryName) => {
-        let country = this.countryRegionList.find(el => el.countryName === countryName)
+        let country = window.countryRegionList.find(el => el.countryName === countryName)
         if (country && country.regions) {
             country = { ...country }
             delete country.regions
@@ -2105,7 +2002,7 @@ class BankDetail extends React.Component {
                         registryVisibilityChanged = true
                     }
                     if (res.errors) {
-                        console.log({ ...res.errors })
+                        console.error({ ...res.errors })
                         registryVisibilityChanged = false
                     }
                 })
@@ -2449,10 +2346,8 @@ class BankDetail extends React.Component {
 
                 if (res.errors) {
                     for (let error of res.errors) {
-                        if (error.errors && error.errors.errors.length > 0) {
-                            for (let err of error.errors.errors) {
-                                toast(err.message, "error")
-                            }
+                        if (error.errors) {
+                            toast(error.errors.message, "error")
                         } else {
                             toast(error.message, "error")
                         }
@@ -2481,7 +2376,7 @@ class BankDetail extends React.Component {
         let states = []
 
         if (this.state.editBankAccount && this.state.country.countryShortCode) {
-            let country = this.countryRegionList.find(el => el.countryShortCode === this.state.country.countryShortCode)
+            let country = window.countryRegionList.find(el => el.countryShortCode === this.state.country.countryShortCode)
             if (country && country.regions) {
                 states = [...country.regions]
             } else {
@@ -2780,6 +2675,7 @@ class BankDetail extends React.Component {
                                                 value={this.state.postalCode}
                                                 onChange={(ev) => this.postalCodeChangeHandler(ev)}
                                                 type="text"
+                                                placeholder="10001"
                                                 name="postal-code"
                                                 min={0}
                                             />
@@ -2799,6 +2695,7 @@ class BankDetail extends React.Component {
                                                 value={this.state.phone}
                                                 onChange={(ev) => this.phoneChangeHandler(ev)}
                                                 type="text"
+                                                placeholder="202-555-0126"
                                                 name="phone"
                                             />
                                             {this.state.bankAccountErrors.phone ?
@@ -2912,7 +2809,7 @@ class BankDetail extends React.Component {
                                 this.state.registry.isPublic ?
                                     <div>
                                         <h2>Removing your bank details will set your registry to private.</h2>
-                                        <p className="text-sm bank-detail-remove-modal-subtext mt-1">Your guests won’t be able to see your registry. Are you sure you want to remove your bank details?</p>
+                                        <p className="text-sm remove-modal-subtext mt-2 mb-3">Your guests won’t be able to see your registry. Are you sure you want to remove your bank details?</p>
                                     </div>
                                     :
                                     <h2>Are you sure you want remove Bank Account?</h2>
@@ -3208,6 +3105,808 @@ class MyDetail extends React.Component {
                         : null}
                     {/* TODO: Password changed detail to be implemented */}
                 </div>
+            </div>
+        )
+    }
+}
+
+class ShippingAddress extends React.Component {
+    DIGIT = /^[0-9]*$/g
+    ALPHABET = /^[A-Za-z]+$/g
+    // To watch input change handler
+    PHONE_WITH_COUNTRY_CODE = /^\+\d{0,11}$/g
+    PHONE_WITHOUT_COUNTRY_CODE = /^\d{0,10}$/g
+
+    // To validate complete phone number
+    PHONE_WITH_COUNTRY_CODE_COMPLETE = /^\+\d{11}$/g
+    PHONE_WITHOUT_COUNTRY_CODE_COMPLETE = /^\d{10}$/g
+
+    state = {
+        registry: null,
+        addresses: [],
+        editShippingAddress: false,
+        editAddressId: null,
+        addressErrors: {},
+        firstName: "",
+        lastName: "",
+        company: "",
+        addressLine1: "",
+        addressLine2: "",
+        city: "",
+        country: {
+            "countryName": "United States",
+            "countryShortCode": "US",
+        },
+        stateProvince: {},
+        postalCode: "",
+        phone: "",
+        isDefaultAddress: false,
+        updateDefaultAddress: true,
+        enableSaveButton: false,
+
+        removeAddressModalShow: false,
+        addressToRemove: null
+    }
+
+    getAddresses = async () => {
+
+        let success = false
+        await apiRest("/api/user/address", "GET").then(res => res.json())
+            .then(res => {
+
+                if (res.data) {
+                    let stateAddresses = []
+                    if (res.data.addresses && res.data.addresses.edges.length > 0 && res.data.defaultAddress.id) {
+                        
+                        for (let address of res.data.addresses.edges) {
+                            address = address.node;
+
+                            let country = this.getCountry(address.countryCodeV2)
+                            let province = {}
+
+                            if (country) {
+                                province = this.getProvince(address.provinceCode, country)
+                            }
+                            if (country && country.regions) {
+                                country = { ...country }
+                                delete country.regions
+                            }
+
+                            stateAddresses.push({
+                                id: address.id,
+                                firstName: address.firstName,
+                                lastName: address.lastName,
+                                address1: address.address1,
+                                address2: address.address2,
+                                city: address.city,
+                                company: address.company,
+                                province: province,
+                                country: country ? country : {},
+                                provinceCode: address.provinceCode,
+                                countryCode: address.countryCodeV2,
+                                zip: address.zip,
+                                phone: address.phone,
+                                isDefault: res.data.defaultAddress.id === address.id
+                            })
+                        }
+                    }
+                    this.setState({
+                        addresses: [...stateAddresses]
+                    })
+                    success = true
+                } else if (res.errors) {
+                    success = false
+                    console.error({ ...res.errors })
+                    toast("Error occurred while fetching address.", "error")
+                }
+            })
+
+        return success
+    }
+
+    componentDidMount() {
+        let _ = this.getAddresses()
+
+        let registryData = window.getRegistry()
+        registryData.then(data => {
+            this.setState({
+                registry: data
+            })
+        })
+    }
+
+    checkForSaveBtnState = () => {
+        let enableSave = false;
+        if (
+            this.state.firstName.length > 0 &&
+            this.state.lastName.length > 0 &&
+            this.state.addressLine1.length > 0 &&
+            this.state.city.length > 0 &&
+            this.state.stateProvince.name &&
+            this.state.country.countryName &&
+            this.state.postalCode.length > 0 &&
+            this.state.phone.length > 0
+        ) {
+            enableSave = true
+        }
+        this.setState({
+            enableSaveButton: enableSave
+        })
+    }
+
+    getCountry = (countryCode = null) => {
+        if (!countryCode) {
+            return null
+        }
+        let country = window.countryRegionList.find(country => country.countryShortCode === countryCode)
+        return country
+    }
+
+    getProvince = (provinceCode, country) => {
+        let province = null
+        if (country) {
+            province = country.regions.find(province => province.shortCode === provinceCode)
+        }
+        return province;
+    }
+
+    // Event Handlers
+
+    removeShippingAddressClickHandler = (ev, address = null) => {
+        ev.preventDefault();
+
+        this.setState({
+            removeAddressModalShow: true,
+            addressToRemove: address
+        })
+    }
+
+    editShippingAddressClickHandler = (ev, address = null) => {
+        ev.preventDefault()
+
+        let isDefaultAddress = null
+        let defaultValues = {}
+        if (address) {
+            // Change this once we have multiple countries
+            let country = null
+            let province = null
+            country = this.getCountry("US")
+            if (country) {
+                province = this.getProvince(address.provinceCode, country)
+            }
+            defaultValues["editAddressId"] = address.id
+            defaultValues['firstName'] = address.firstName ? address.firstName : "";
+            defaultValues['lastName'] = address.lastName ? address.lastName : "";
+            defaultValues['company'] = address.company ? address.company : "";
+            defaultValues['addressLine1'] = address.address1 ? address.address1 : "";
+            defaultValues['addressLine2'] = address.address2 ? address.address2 : "";
+            defaultValues['city'] = address.city ? address.city : "";
+            defaultValues['country'] = country ? country : {};
+            defaultValues['stateProvince'] = province ? province : {};
+            defaultValues['postalCode'] = address.zip ? address.zip : {};
+            defaultValues['phone'] = address.phone ? address.phone : {};
+            isDefaultAddress = address.isDefault;
+        }
+
+        this.setState({
+            ...defaultValues,
+            editShippingAddress: true,
+            isDefaultAddress: isDefaultAddress !== null ? isDefaultAddress : this.state.addresses.length < 1,
+            updateDefaultAddress: isDefaultAddress !== null ? !isDefaultAddress : this.state.addresses.length >= 1,
+            enableSaveButton: isDefaultAddress ? true : false
+        })
+    }
+
+    firstNameChangeHandler = async ev => {
+        if (ev.target.value.match(this.ALPHABET) || ev.target.value.length <= 0) {
+            let errors = { ...this.state.addressErrors }
+            if (errors.firstName) {
+                delete errors.firstName
+            }
+
+            await this.setState({
+                firstName: ev.target.value,
+                addressErrors: errors
+            })
+            this.checkForSaveBtnState()
+        }
+    }
+
+    lastNameChangeHandler = async ev => {
+        if (ev.target.value.match(this.ALPHABET) || ev.target.value.length <= 0) {
+            let errors = { ...this.state.addressErrors }
+            if (errors.lastName) {
+                delete errors.lastName
+            }
+
+            await this.setState({
+                lastName: ev.target.value,
+                addressErrors: errors
+            })
+            this.checkForSaveBtnState()
+        }
+    }
+
+    companyChangeHandler = ev => {
+        this.setState({
+            company: ev.target.value
+        })
+    }
+
+    addressLine1ChangeHandler = async (ev) => {
+        let errors = { ...this.state.addressErrors }
+        if (errors.addressLine1) {
+            delete errors.addressLine1
+        }
+
+        await this.setState({
+            addressLine1: ev.target.value,
+            addressErrors: errors
+        })
+        this.checkForSaveBtnState()
+    }
+
+    addressLine2ChangeHandler = (ev) => {
+        this.setState({
+            addressLine2: ev.target.value
+        })
+    }
+
+    cityChangeHandler = async (ev) => {
+        if (ev.target.value.match(this.ALPHABET) || ev.target.value.length <= 0) {
+            let errors = { ...this.state.addressErrors }
+            if (errors.city) {
+                delete errors.city
+            }
+            await this.setState({
+                city: ev.target.value,
+                addressErrors: errors
+            })
+            this.checkForSaveBtnState()
+        }
+    }
+
+    selectTriggerClickHandler = (parentContainerId) => {
+        let parentContainer = document.getElementById(parentContainerId)
+        if (parentContainer) {
+            if (parentContainer.classList.contains('hide-custom-select-input')) {
+                parentContainer.classList.remove('hide-custom-select-input');
+            }
+        }
+    }
+
+    stateProvinceChangeHandler = async (value, parentContainerId) => {
+        let errors = { ...this.state.addressErrors }
+        if (errors.stateProvince) {
+            delete errors.stateProvince
+        }
+
+        await this.setState({
+            stateProvince: value,
+            addressErrors: errors
+        })
+        this.checkForSaveBtnState()
+
+        let parentContainer = document.getElementById(parentContainerId)
+        if (parentContainer) {
+            parentContainer.classList.toggle('hide-custom-select-input');
+        }
+    }
+
+    postalCodeChangeHandler = async (ev) => {
+        if (ev.target.value.match(this.DIGIT) && ev.target.value.length <= 5) {
+            let errors = { ...this.state.addressErrors }
+            if (errors.postalCode) {
+                delete errors.postalCode
+            }
+
+            await this.setState({
+                postalCode: ev.target.value,
+                addressErrors: errors
+            })
+            this.checkForSaveBtnState()
+        }
+    }
+
+    phoneChangeHandler = async (ev) => {
+        if (ev.target.value.match(this.PHONE_WITH_COUNTRY_CODE) || ev.target.value.match(this.PHONE_WITHOUT_COUNTRY_CODE) || ev.target.value.length <= 0) {
+            let errors = { ...this.state.addressErrors }
+            if (errors.phone) {
+                delete errors.phone
+            }
+
+            await this.setState({
+                phone: ev.target.value,
+                addressErrors: errors
+            })
+            this.checkForSaveBtnState()
+        }
+    }
+
+    addressDefaultChangeHandler = () => {
+        if (this.state.updateDefaultAddress) {
+            this.setState((prevState, _) => ({
+                isDefaultAddress: !prevState.isDefaultAddress
+            }))
+        }
+    }
+
+    cancelClickHandler = (ev = null) => {
+        if (ev) {
+            ev.preventDefault()
+        }
+
+        this.setState({
+            editShippingAddress: false,
+            editAddressId: null,
+            addressErrors: {},
+            firstName: "",
+            lastName: "",
+            company: "",
+            addressLine1: "",
+            addressLine2: "",
+            city: "",
+            country: {
+                "countryName": "United States",
+                "countryShortCode": "US",
+            },
+            stateProvince: {},
+            postalCode: "",
+            phone: "",
+            isDefaultAddress: false,
+            enableSaveButton: false
+        })
+    }
+
+    saveShippingAddress = () => {
+        let mutationCalled = ""
+        let addAddress = false
+        let reqData = {
+            variables: {
+                addressData: {
+                    firstName: this.state.firstName,
+                    lastName: this.state.lastName,
+                    address1: this.state.addressLine1,
+                    address2: this.state.addressLine2,
+                    company: this.state.company,
+                    city: this.state.city,
+                    province: this.state.stateProvince.name,
+                    country: this.state.country.countryName,
+                    provinceCode: this.state.stateProvince.shortCode,
+                    countryCode: this.state.country.countryShortCode,
+                    zip: this.state.postalCode,
+                    phone: this.state.phone,
+                    isDefault: this.state.isDefaultAddress
+                }
+            }
+        }
+        if (this.state.editAddressId) {
+            // Call update api
+            reqData['query'] = window.UPDATE_ADDRESS
+            reqData.variables['addressId'] = this.state.editAddressId
+            mutationCalled = "updateAddress"
+        } else {
+            // Call Add api
+            reqData['query'] = window.ADD_ADDRESS
+            mutationCalled = "addAddress"
+            addAddress = true
+        }
+
+        apiGraphql(reqData).then(res => res.json())
+            .then(res => {
+                if (res.data && res.data[mutationCalled].address) {
+                    let addressFetched = this.getAddresses()
+                    addressFetched.then(res => {
+                        if (res) {
+                            if (addAddress) {
+                                toast("Address added successfully.")
+                            } else {
+                                toast("Address updated successfully.")
+                            }
+                            this.cancelClickHandler()
+                        } else {
+                            toast("Address updated. Error occurred while fetching address.", "error")
+                        }
+                    })
+                } else if (res.errors) {
+                    for (let error of res.errors) {
+                        toast(error.message, "error")
+                    }
+                    console.error({ ...res.errors })
+                }
+            })
+    }
+
+    closeRemoveAddressModal = () => {
+        this.setState({
+            removeAddressModalShow: false
+        })
+    }
+
+    removeBankAccountClickHandler = () => {
+        if (this.state.addressToRemove) {
+            let reqData = {
+                query: window.REMOVE_ADDRESS,
+                variables: {
+                    addressId: this.state.addressToRemove.id
+                }
+            }
+
+            apiGraphql(reqData).then(res => res.json())
+                .then(res => {
+                    if (res.data && res.data.deleteAddress) {
+                        let addressFetched = this.getAddresses()
+                        addressFetched.then(res => {
+                            if (res) {
+                                toast("Address deleted successfully.", "error")
+                                this.setState({
+                                    addressToRemove: null
+                                })
+                            } else {
+                                toast("Address deleted. Error occurred while fetching address.", "error")
+                            }
+                            this.closeRemoveAddressModal()
+                        })
+                    } else if (res.errors) {
+                        for (let error of res.errors) {
+                            toast(error.message, "error")
+                        }
+                        console.error({ ...res.errors })
+                        this.closeRemoveAddressModal()
+                    }
+                })
+        } else {
+            this.closeRemoveAddressModal()
+            toast("No address to remove.", "error")
+        }
+    }
+
+
+    render() {
+        let states = []
+
+        if (this.state.editShippingAddress && this.state.country.countryShortCode) {
+            let country = window.countryRegionList.find(el => el.countryShortCode === this.state.country.countryShortCode)
+            if (country && country.regions) {
+                states = [...country.regions]
+            } else {
+                console.error("Unable to fetch country or region")
+            }
+        }
+
+        let addressesToDisplay = this.state.addresses.map(address => {
+            let addressDetail = [
+                {
+                    label: (<span>Name</span>),
+                    value: `${address.firstName ? address.firstName : ""} ${address.lastName ? address.lastName : ""}`
+                },
+                {
+                    label: (<span>Company</span>),
+                    value: `${address.company ? address.company : "-"}`
+                },
+                {
+                    label: (<span>Address Line 1</span>),
+                    value: `${address.address1 ? address.address1 : "-"}`
+                },
+                {
+                    label: (<span>Address Line 2</span>),
+                    value: `${address.address2 ? address.address2 : "-"}`
+                },
+                {
+                    label: (<span>City</span>),
+                    value: `${address.city ? address.city : "-"}`
+                },
+                {
+                    label: (<span>Country</span>),
+                    value: `${address.country.countryName ? address.country.countryName : "-"}`
+                },
+                {
+                    label: (<span>State / Province</span>),
+                    value: `${address.province.name ? address.province.name : "-"}`
+                },
+                {
+                    label: (<span>Postal / Zip Code</span>),
+                    value: `${address.zip ? address.zip : "-"}`
+                },
+                {
+                    label: (<span>Phone</span>),
+                    value: `${address.phone ? address.phone : "-"}`
+                }
+            ]
+            return {
+                "isDefault": address.isDefault,
+                "id": address.id,
+                "addressDetail": addressDetail,
+                "address": address
+            }
+        })
+
+        return (
+            <div className="settings-my-detail">
+                <div className="shipping-address">
+                    <div className="settings-component-headers">
+                        <h3 className="d-inline-block mr-2">Shipping Address</h3>
+                        {!this.state.editShippingAddress && this.state.addresses.length > 0 ? <a href="#" onClick={(ev) => this.editShippingAddressClickHandler(ev, this.state.addresses[0])} className="settings-link text-sm font-medium mr-2">Edit</a> : null}
+                        {!this.state.editShippingAddress && this.state.addresses.length > 0 ? <a href="#" onClick={(ev) => this.removeShippingAddressClickHandler(ev, this.state.addresses[0])} className="settings-link text-sm font-medium">Remove</a> : null}
+                    </div>
+
+                    {this.state.editShippingAddress ? (
+                        <div className="edit-shipping-address">
+                            <div className="row">
+                                <div className="col-6">
+                                    <div className="settings-input-container">
+                                        <label className="settings-input-label settings-input-required text-sm font-medium m-0">First Name</label>
+                                        <input
+                                            className={["settings-input text-body mw-100 w-100 mb-0", this.state.addressErrors.firstName ? 'settings-input-error' : ''].join(" ")}
+                                            value={this.state.firstName}
+                                            onChange={(ev) => this.firstNameChangeHandler(ev)}
+                                            type="text"
+                                            name="first-name"
+                                            min={0}
+                                        />
+                                        {this.state.addressErrors.firstName ?
+                                            <label className="settings-input-error-message text-sm m-0">{this.state.addressErrors.firstName}</label>
+                                            : null}
+                                    </div>
+                                </div>
+                                <div className="col-6">
+                                    <div className="settings-input-container">
+                                        <label className="settings-input-label settings-input-required text-sm font-medium m-0">Last Name</label>
+                                        <input
+                                            className={["settings-input text-body mw-100 w-100 mb-0", this.state.addressErrors.lastName ? 'settings-input-error' : ''].join(" ")}
+                                            value={this.state.lastName}
+                                            onChange={(ev) => this.lastNameChangeHandler(ev)}
+                                            type="text"
+                                            name="last-name"
+                                            min={0}
+                                        />
+                                        {this.state.addressErrors.lastName ?
+                                            <label className="settings-input-error-message text-sm m-0">{this.state.addressErrors.lastName}</label>
+                                            : null}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-6">
+                                    <div className="settings-input-container input-container-margin">
+                                        <label className="settings-input-label text-sm font-medium m-0">Company</label>
+                                        <input
+                                            className="settings-input text-body mw-100 w-100 mb-0"
+                                            value={this.state.company}
+                                            onChange={(ev) => this.companyChangeHandler(ev)}
+                                            type="text"
+                                            name="company"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-6">
+                                    <div className="settings-input-container input-container-margin">
+                                        <label className="settings-input-label settings-input-required text-sm font-medium m-0">Address Line 1</label>
+                                        <input
+                                            className={["settings-input text-body mw-100 w-100 mb-0", this.state.addressErrors.addressLine1 ? 'settings-input-error' : ''].join(" ")}
+                                            value={this.state.addressLine1}
+                                            onChange={(ev) => this.addressLine1ChangeHandler(ev)}
+                                            type="text"
+                                            name="address-line-1"
+                                            min={0}
+                                        />
+                                        {this.state.addressErrors.addressLine1 ?
+                                            <label className="settings-input-error-message text-sm m-0">{this.state.addressErrors.addressLine1}</label>
+                                            : null}
+                                    </div>
+                                </div>
+                                <div className="col-6">
+                                    <div className="settings-input-container input-container-margin">
+                                        <label className="settings-input-label text-sm font-medium m-0">Address Line 2</label>
+                                        <input
+                                            className={["settings-input text-body mw-100 w-100 mb-0", this.state.addressErrors.addressLine2 ? 'settings-input-error' : ''].join(" ")}
+                                            value={this.state.addressLine2}
+                                            onChange={(ev) => this.addressLine2ChangeHandler(ev)}
+                                            type="text"
+                                            name="address-line-2"
+                                            min={0}
+                                        />
+                                        {this.state.addressErrors.addressLine2 ?
+                                            <label className="settings-input-error-message text-sm m-0">{this.state.addressErrors.addressLine2}</label>
+                                            : null}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-6">
+                                    <div className="settings-input-container input-container-margin">
+                                        <label className="settings-input-label settings-input-required text-sm font-medium m-0">City</label>
+                                        <input
+                                            className={["settings-input text-body mw-100 w-100 mb-0", this.state.addressErrors.city ? 'settings-input-error' : ''].join(" ")}
+                                            value={this.state.city}
+                                            onChange={(ev) => this.cityChangeHandler(ev)}
+                                            type="text"
+                                            name="city"
+                                            min={0}
+                                        />
+                                        {this.state.addressErrors.city ?
+                                            <label className="settings-input-error-message text-sm m-0">{this.state.addressErrors.city}</label>
+                                            : null}
+                                    </div>
+                                </div>
+                                <div className="col-6">
+                                    <div className="settings-input-container input-container-margin">
+                                        <label className="settings-input-label settings-input-required text-sm font-medium m-0">Country</label>
+                                        <input
+                                            className={["settings-input text-body mw-100 w-100 mb-0", this.state.addressErrors.country ? 'settings-input-error' : ''].join(" ")}
+                                            value={this.state.country.countryName}
+                                            type="text"
+                                            disabled={true}
+                                        />
+                                        {this.state.addressErrors.country ?
+                                            <label className="settings-input-error-message text-sm m-0">{this.state.addressErrors.country}</label>
+                                            : null}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-6">
+                                    <div className="settings-input-container input-container-margin">
+                                        <label className="settings-input-label settings-input-required text-sm font-medium m-0">State / Province</label>
+                                        <div className="custom-select-input">
+                                            <button className={["custom-select-trigger w-100 text-left text-body", this.state.addressErrors.stateProvince ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("stateSelectContainer")}>{this.state.stateProvince.name ? this.state.stateProvince.name : "Select State/Province"}</button>
+                                            <div className="custom-select-container" id="stateSelectContainer">
+                                                <ul className="custom-select-lists w-100 p-0">
+                                                    {states.map(state => (
+                                                        <li onClick={() => this.stateProvinceChangeHandler(state, "stateSelectContainer")}>{state.name}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        {this.state.addressErrors.stateProvince ?
+                                            <label className="settings-input-error-message text-sm m-0">{this.state.addressErrors.stateProvince}</label>
+                                            : null}
+                                    </div>
+                                </div>
+                                <div className="col-6">
+                                    <div className="settings-input-container input-container-margin">
+                                        <label className="settings-input-label settings-input-required text-sm font-medium m-0">Postal / Zip Code</label>
+                                        <input
+                                            className={["settings-input text-body mw-100 w-100 mb-0", this.state.addressErrors.postalCode ? 'settings-input-error' : ''].join(" ")}
+                                            value={this.state.postalCode}
+                                            onChange={(ev) => this.postalCodeChangeHandler(ev)}
+                                            type="text"
+                                            name="postal-code"
+                                            min={0}
+                                        />
+                                        {this.state.addressErrors.postalCode ?
+                                            <label className="settings-input-error-message text-sm m-0">{this.state.addressErrors.postalCode}</label>
+                                            : null}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-6">
+                                    <div className="settings-input-container input-container-margin">
+                                        <label className="settings-input-label settings-input-required text-sm font-medium m-0">Phone</label>
+                                        <input
+                                            className={["settings-input text-body mw-100 w-100 mb-0", this.state.addressErrors.phone ? 'settings-input-error' : ''].join(" ")}
+                                            value={this.state.phone}
+                                            onChange={(ev) => this.phoneChangeHandler(ev)}
+                                            type="text"
+                                            name="phone"
+                                        />
+                                        {this.state.addressErrors.phone ?
+                                            <label className="settings-input-error-message text-sm m-0">{this.state.addressErrors.phone}</label>
+                                            : null}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col">
+                                    <CheckBox
+                                        display="Set as default address  (Your registry guests will see this address)"
+                                        textClass="text-sm"
+                                        className="shipping-address-default-checkbox"
+                                        checked={this.state.isDefaultAddress}
+                                        changeHandler={this.addressDefaultChangeHandler}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col settings-edit-footer-section mb-4">
+                                    <Button
+                                        className="settings-edit-footer-button text-body font-medium"
+                                        onClick={this.saveShippingAddress}
+                                        disabled={!this.state.enableSaveButton}
+                                    >Save</Button>
+                                    <a href="#" className="settings-link text-body font-medium settings-edit-footer-cancel" onClick={(ev) => this.cancelClickHandler(ev)}>Cancel</a>
+                                </div>
+                            </div>
+
+                        </div>
+                    ) :
+                        this.state.addresses.length <= 0 ?
+                            // No shipping address
+                            <a className="settings-link text-body" href="#" onClick={(ev) => this.editShippingAddressClickHandler(ev)}><u>Add Shipping Address</u></a>
+                            :
+                            <div>
+                                {addressesToDisplay.map((address, index) => (
+
+                                    <div className="shipping-address-details">
+                                        {index !== 0 ?
+                                            <div className="row">
+                                                <div className="col">
+                                                    {!this.state.editShippingAddress && this.state.addresses.length > 0 ? <a href="#" onClick={(ev) => this.editShippingAddressClickHandler(ev, address.address)} className="settings-link text-sm font-medium mr-2">Edit</a> : null}
+                                                    {!this.state.editShippingAddress && this.state.addresses.length > 0 ? <a href="#" onClick={(ev) => this.removeShippingAddressClickHandler(ev, address.address)} className="settings-link text-sm font-medium">Remove</a> : null}
+                                                </div>
+                                            </div>
+                                            : null}
+                                        {address.addressDetail.map(el => (
+                                            <div className="row shipping-address-row">
+                                                <div className="col-3">
+                                                    <p className="text-sm font-medium">{el.label}</p>
+                                                </div>
+                                                <div className="col">
+                                                    <p className="text-sm">{el.value}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {address.isDefault ?
+                                            <div className="row shipping-address-row">
+                                                <div className="col">
+                                                    <p className="text-sm font-medium">{`Default Address ${this.state.registry ? "(Your registry guests will see this address)" : ""}`}</p>
+                                                </div>
+                                            </div>
+                                            : null}
+                                    </div>
+                                ))}
+
+                                {addressesToDisplay.length > 0 ?
+                                    <div className="mt-4 mb-5">
+                                        <h3>Another Address</h3>
+                                        <a className="settings-link d-block text-body mt-4" href="#" onClick={(ev) => this.editShippingAddressClickHandler(ev)}>Add Another Address</a>
+                                    </div>
+                                    : null}
+                            </div>
+                    }
+
+                </div>
+                {this.state.removeAddressModalShow ?
+                    <ModalComponent
+                        show={this.state.removeAddressModalShow}
+                        size="md"
+                        closeModal={() => this.setState({ showConfirmRemoveModal: false })}
+                        footer={
+                            <div>
+                                <Button
+                                    variant="secondary"
+                                    onClick={this.closeRemoveAddressModal}
+                                    className="bank-detail-remove-button text-body font-medium mr-2"
+                                >Do Not Remove</Button>
+
+                                <Button
+                                    variant="primary"
+                                    onClick={this.removeBankAccountClickHandler}
+                                    className="bank-detail-remove-button text-body font-medium"
+                                >Yes, Please Remove</Button>
+                            </div>
+                        }
+                    >
+                        {this.state.addresses.length === 1 && this.state.registry && this.state.registry.isPublic ?
+                            <div>
+                                <h2>Gift givers would not be able to see shipping address when they visit your registry...</h2>
+                                <p className="text-sm remove-modal-subtext mt-2 mb-3">You have shared this address to your guests in registry. Are you sure you want to remove the address?</p>
+                            </div>
+                            :
+                            <h2>Are you sure you want to remove the address?</h2>
+                        }
+                    </ModalComponent>
+                    : null}
             </div>
         )
     }
