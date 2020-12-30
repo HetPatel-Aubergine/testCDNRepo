@@ -499,7 +499,7 @@ var ADD_ADDRESS = `
 `
 
 var UPDATE_ADDRESS = `
-mutation updateAddress($addressId: Int!, $addressData: AddressInput!){
+mutation updateAddress($addressId: String!, $addressData: AddressInput!){
     updateAddress(addressId:$addressId,
     addressData:$addressData){
       address{
@@ -657,6 +657,7 @@ class RegistryDetail extends React.Component {
 
         // Registry Detail
         editRegistryDetail: false,
+        enableRegistryDetailSaveBtn: true,
         registryErrors: {},
         editRegistryDetailChanged: false,
         registryLink: "",
@@ -683,6 +684,10 @@ class RegistryDetail extends React.Component {
         partnerEmail: "",
         partnerRemoveConfirmModal: false
     }
+
+    registryDetailApiCalled = false
+    childrenDetailApiCalled = false
+    partnerDetailApiCalled = false
 
     CHILDREN_COUNT_LIST = [
         { key: 'One', value: 'One' },
@@ -753,66 +758,94 @@ class RegistryDetail extends React.Component {
         }
     }
 
-    // Event Handler
-    addInlineGreetingsClickHandler = (ev) => {
-        ev.preventDefault()
-        let editFieldsDetail = this.getEditRegistryDetailFields()
+    checkRegistryDetailSaveBtn = () => {
+        let enableState = false
+        if (this.state.inlineEditGreetingsShow) {
+            enableState = !(
+                this.state.registryName === this.state.registry.displayName &&
+                this.state.registryGreetings === this.state.registry.greeting
+            )
+        } else {
+            enableState = !(
+                this.state.registryLink === this.state.registry.urlSlug &&
+                this.state.registryName === this.state.registry.displayName &&
+                this.state.registryGreetings === this.state.registry.greeting &&
+                this.state.isPublic === this.state.registry.isPublic)
+        }
         this.setState({
-            ...editFieldsDetail,
-            inlineEditGreetingsShow: true
+            enableRegistryDetailSaveBtn: enableState
         })
     }
 
-    editRegistryDetailClickHandler = (ev) => {
-        ev.preventDefault();
+    // Event Handler
+    addInlineGreetingsClickHandler = async (ev) => {
+        ev.preventDefault()
+        this.registryDetailApiCalled = false
         let editFieldsDetail = this.getEditRegistryDetailFields()
-        this.setState({
+        await this.setState({
+            ...editFieldsDetail,
+            inlineEditGreetingsShow: true
+        })
+        this.checkRegistryDetailSaveBtn()
+    }
+
+    editRegistryDetailClickHandler = async (ev) => {
+        ev.preventDefault();
+        this.registryDetailApiCalled = false
+        let editFieldsDetail = this.getEditRegistryDetailFields()
+        await this.setState({
             ...editFieldsDetail,
             editRegistryDetail: true,
             editRegistryDetailChanged: false
         })
+        this.checkRegistryDetailSaveBtn()
     }
 
-    registryNameChangeHandler = (ev) => {
+    registryNameChangeHandler = async (ev) => {
         let errors = { ...this.state.registryErrors }
         if (errors.registryName) {
             delete errors.registryName
         }
 
-        this.setState({
+        await this.setState({
             registryName: ev.target.value,
             editRegistryDetailChanged: true,
             registryErrors: errors
         })
+        this.checkRegistryDetailSaveBtn()
     }
 
-    registryGreetingsChangeHandler = (ev) => {
+    registryGreetingsChangeHandler = async (ev) => {
         if (ev.target.value.length <= this.MAX_GREETINGS_LENGTH) {
-            this.setState({
+            await this.setState({
                 registryGreetings: ev.target.value,
                 editRegistryDetailChanged: true,
             })
         }
+        this.checkRegistryDetailSaveBtn()
     }
 
-    registryLinkChangeHandler = (ev) => {
+    registryLinkChangeHandler = async (ev) => {
         let errors = { ...this.state.registryErrors }
         if (errors.registryLink) {
             delete errors.registryLink
         }
 
-        this.setState({
+        await this.setState({
             registryLink: ev.target.value,
             editRegistryDetailChanged: true,
             registryErrors: errors
         })
+        this.checkRegistryDetailSaveBtn()
     }
 
-    registryVisibilityChangeHandler = (value) => {
-        this.setState({
+    registryVisibilityChangeHandler = async (value) => {
+        await this.setState({
             isPublic: value,
             editRegistryDetailChanged: true,
         })
+
+        this.checkRegistryDetailSaveBtn()
     }
 
     cancelClickHandler = (ev) => {
@@ -842,40 +875,46 @@ class RegistryDetail extends React.Component {
             }
         }
 
-        apiGraphql(reqData).then(res => res.json())
-            .then(res => {
-                if (res.data && res.data.updateRegistry) {
-                    this.setState({
-                        registry: res.data.updateRegistry.registry,
-                        editRegistryDetail: false,
-                        registryErrors: {},
-                        editRegistryDetailChanged: false,
-                        registryLink: "",
-                        registryName: "",
-                        registryGreetings: "",
-                        isPublic: false,
-                        inlineEditGreetingsShow: false
-                    })
-                    toast("Registry Detail updated succesfully")
-                }
-                if (res.errors) {
-                    for (let error of res.errors) {
-                        if (error.errors && error.errors.url_slug) {
-                            this.setState({
-                                registryErrors: { registryLink: error.errors.url_slug }
-                            })
-                        }
+        if (!this.registryDetailApiCalled){
+            this.registryDetailApiCalled = true
+            apiGraphql(reqData).then(res => res.json())
+                .then(res => {
+                    if (res.data && res.data.updateRegistry) {
+                        this.setState({
+                            registry: res.data.updateRegistry.registry,
+                            editRegistryDetail: false,
+                            registryErrors: {},
+                            editRegistryDetailChanged: false,
+                            registryLink: "",
+                            registryName: "",
+                            registryGreetings: "",
+                            isPublic: false,
+                            inlineEditGreetingsShow: false
+                        })
+                        toast("Registry Detail updated succesfully")
                     }
+                    if (res.errors) {
+                        this.registryDetailApiCalled = false
+                        for (let error of res.errors) {
+                            if (error.errors && error.errors.url_slug) {
+                                this.setState({
+                                    registryErrors: { registryLink: error.errors.url_slug }
+                                })
+                            }
+                        }
+        
+                        console.error({ ...res.errors })
+                    }
+                })
+        }
 
-                    console.error({ ...res.errors })
-                }
-            })
     }
 
 
     // CHILDREN INFO
     editChildrenClickHandler = (ev) => {
         ev.preventDefault()
+        this.childrenDetailApiCalled = false
         let childrenCount = this.CHILDREN_COUNT_LIST.find(option => this.state.registry && this.state.registry.childrenQuestions.numberOfChildren === option.key)
         this.setState({
             editChildrenInfo: true,
@@ -1039,31 +1078,36 @@ class RegistryDetail extends React.Component {
             }
         }
 
-        apiGraphql(reqData).then(res => res.json())
-            .then(res => {
-                if (res.data) {
-                    if (res.data.updateRegistryChildrenQuestion && res.data.updateRegistryChildrenQuestion.childrenQuestion) {
-                        toast("Child(ren) Information updated successfully")
-                        let registry = { ...this.state.registry }
-                        registry.childrenQuestions = res.data.updateRegistryChildrenQuestion.childrenQuestion
-                        this.setState({
-                            registry: registry
-                        })
-                        this.closeChildInfoEditClickHandler()
+        if (!this.childrenDetailApiCalled){
+            this.childrenDetailApiCalled = true
+            apiGraphql(reqData).then(res => res.json())
+                .then(res => {
+                    if (res.data) {
+                        if (res.data.updateRegistryChildrenQuestion && res.data.updateRegistryChildrenQuestion.childrenQuestion) {
+                            toast("Child(ren) Information updated successfully")
+                            let registry = { ...this.state.registry }
+                            registry.childrenQuestions = res.data.updateRegistryChildrenQuestion.childrenQuestion
+                            this.setState({
+                                registry: registry
+                            })
+                            this.closeChildInfoEditClickHandler()
+                        }
+                    } else if (res.errors) {
+                        this.childrenDetailApiCalled = false
+                        for (let error of res.errors) {
+                            toast(error.message, "error")
+                        }
+                        console.error({ ...res.errors })
                     }
-                } else if (res.errors) {
-                    for (let error of res.errors) {
-                        toast(error.message, "error")
-                    }
-                    console.error({ ...res.errors })
-                }
-            })
+                })
+        }
     }
 
 
     // PARTNER
     editPartnerInfoClickHandler = (ev) => {
         ev.preventDefault()
+        this.partnerDetailApiCalled = false
         this.setState({
             editPartnerInfo: true,
             partnerFirstName: this.state.userInfo && this.state.userInfo.partner ? this.state.userInfo.partner.firstName : "",
@@ -1172,26 +1216,29 @@ class RegistryDetail extends React.Component {
                         }
                     }
                 }
-
-                apiGraphql(reqData).then(res => res.json())
-                    .then(res => {
-                        if (res.data) {
-                            if (res.data.udpatePartnerAccount) {
-                                let userInfo = { ...this.state.userInfo }
-                                userInfo.partner = res.data.udpatePartnerAccount.partnerAccount
-                                this.setState({
-                                    userInfo: userInfo,
-                                    editPartnerInfo: false
-                                })
-                                toast("Partner account updated successfully")
+                if (!this.partnerDetailApiCalled) {
+                    this.partnerDetailApiCalled = true
+                    apiGraphql(reqData).then(res => res.json())
+                        .then(res => {
+                            if (res.data) {
+                                if (res.data.udpatePartnerAccount) {
+                                    let userInfo = { ...this.state.userInfo }
+                                    userInfo.partner = res.data.udpatePartnerAccount.partnerAccount
+                                    this.setState({
+                                        userInfo: userInfo,
+                                        editPartnerInfo: false
+                                    })
+                                    toast("Partner account updated successfully")
+                                }
+                            } else if (res.errors) {
+                                this.partnerDetailApiCalled = false
+                                for (let error of res.errors) {
+                                    toast(error.message, "error")
+                                }
+                                console.error({ ...res.errors })
                             }
-                        } else if (res.errors) {
-                            for (let error of res.errors) {
-                                toast(error.message, "error")
-                            }
-                            console.error({ ...res.errors })
-                        }
-                    })
+                        })
+                }
             } else {
                 // Call Add API
                 let reqData = {
@@ -1204,25 +1251,30 @@ class RegistryDetail extends React.Component {
                     }
                 }
 
-                apiGraphql(reqData).then(res => res.json())
-                    .then(res => {
-                        if (res.data) {
-                            if (res.data.addPartnerAccount) {
-                                let userInfo = { ...this.state.userInfo }
-                                userInfo.partner = res.data.addPartnerAccount.partnerAccount
-                                this.setState({
-                                    userInfo: userInfo,
-                                    editPartnerInfo: false
-                                })
-                                toast("Partner account added successfully")
+                if (!this.partnerDetailApiCalled) {
+                    this.partnerDetailApiCalled = true
+                    apiGraphql(reqData).then(res => res.json())
+                        .then(res => {
+                            if (res.data) {
+                                if (res.data.addPartnerAccount) {
+                                    let userInfo = { ...this.state.userInfo }
+                                    userInfo.partner = res.data.addPartnerAccount.partnerAccount
+                                    this.setState({
+                                        userInfo: userInfo,
+                                        editPartnerInfo: false
+                                    })
+                                    toast("Partner account added successfully")
+                                }
+                            } else if (res.errors) {
+                                this.partnerDetailApiCalled = false
+                                for (let error of res.errors) {
+                                    toast(error.message, "error")
+                                }
+                                console.error({ ...res.errors })
                             }
-                        } else if (res.errors) {
-                            for (let error of res.errors) {
-                                toast(error.message, "error")
-                            }
-                            console.error({ ...res.errors })
-                        }
-                    })
+                        })
+
+                }
             }
         }
     }
@@ -1395,7 +1447,7 @@ class RegistryDetail extends React.Component {
                                         <Button
                                             className="settings-edit-footer-button text-body font-medium"
                                             onClick={this.saveRegistryDetailClickHandler}
-                                            disabled={!this.state.editRegistryDetailChanged || Object.keys(this.state.registryErrors).length > 0}
+                                            disabled={!this.state.enableRegistryDetailSaveBtn || Object.keys(this.state.registryErrors).length > 0}
                                         >Save</Button>
                                         <a href="#" className="settings-link text-body font-medium settings-edit-footer-cancel" onClick={(ev) => this.cancelClickHandler(ev)}>Cancel</a>
                                     </div>
@@ -1456,6 +1508,7 @@ class RegistryDetail extends React.Component {
                                         <Button
                                             variant="primary"
                                             onClick={this.saveRegistryDetailClickHandler}
+                                            disabled={!this.state.enableRegistryDetailSaveBtn || Object.keys(this.state.registryErrors).length > 0}
                                             className="registry-detail-inline-greeting-save-btn text-body font-medium"
                                         >{`Save & Close`}</Button>
                                     </div>
@@ -1639,6 +1692,7 @@ class RegistryDetail extends React.Component {
                         }
                     </div>
 
+                    {/* Partner */}
                     <div className="registry-partner-section">
                         <div className="settings-component-headers">
                             <h3 className="d-inline-block mr-1">Partner</h3>
@@ -1808,7 +1862,7 @@ class BankDetail extends React.Component {
         addressLine2: "",
         city: "",
         country: {
-            "countryName": "United States of America",
+            "countryName": "United States",
             "countryShortCode": "US",
         },
         stateProvince: {},
@@ -1817,6 +1871,8 @@ class BankDetail extends React.Component {
         dateOfBirth: "",
         termsAccepted: false,
     }
+
+    bankAccountApiCalled = false
 
     // Bank Account Type
     bankAccountType = [
@@ -1854,7 +1910,7 @@ class BankDetail extends React.Component {
             addressLine2: "",
             city: "",
             country: {
-                "countryName": "United States of America",
+                "countryName": "United States",
                 "countryShortCode": "US",
             },
             stateProvince: {},
@@ -2052,7 +2108,7 @@ class BankDetail extends React.Component {
     editAccountLinkClickHandler = ev => {
         ev.preventDefault();
         let state2Update = {}
-
+        this.bankAccountApiCalled = false
         if (this.state.bankAccount.length > 0) {
             state2Update = {
                 routingNumber: this.state.bankAccount[0].routingNumber,
@@ -2332,30 +2388,34 @@ class BankDetail extends React.Component {
             reqData.variables['bankAccountId'] = this.state.bankAccount[0].id
         }
 
-        apiGraphql(reqData).then(res => res.json())
-            .then(res => {
-                if (res.data && res.data[mutationCalled]) {
-                    let clearData = this.getClearState()
-                    this.setState({
-                        ...clearData,
-                        bankAccount: [res.data[mutationCalled].bankAccount],
-                        editBankAccount: false
-                    })
-                    toast("Bank Account detail changed successfully.")
-                }
-
-                if (res.errors) {
-                    for (let error of res.errors) {
-                        if (error.errors) {
-                            toast(error.errors.message, "error")
-                        } else {
-                            toast(error.message, "error")
-                        }
-
+        if (!this.bankAccountApiCalled){
+            this.bankAccountApiCalled = true
+            apiGraphql(reqData).then(res => res.json())
+                .then(res => {
+                    if (res.data && res.data[mutationCalled]) {
+                        let clearData = this.getClearState()
+                        this.setState({
+                            ...clearData,
+                            bankAccount: [res.data[mutationCalled].bankAccount],
+                            editBankAccount: false
+                        })
+                        toast("Bank Account detail changed successfully.")
                     }
-                    console.error({ ...res.errors })
-                }
-            })
+    
+                    if (res.errors) {
+                        this.bankAccountApiCalled = false
+                        for (let error of res.errors) {
+                            if (error.errors) {
+                                toast(error.errors.message, "error")
+                            } else {
+                                toast(error.message, "error")
+                            }
+    
+                        }
+                        console.error({ ...res.errors })
+                    }
+                })
+        }
     }
 
     getMaskedNumber = (value) => {
@@ -2375,7 +2435,8 @@ class BankDetail extends React.Component {
         let bankAccountDetail = []
         let states = []
 
-        if (this.state.editBankAccount && this.state.country.countryShortCode) {
+        if (this.state.editBankAccount && this.state.country && this.state.country.countryShortCode) {
+            console.log("asd")
             let country = window.countryRegionList.find(el => el.countryShortCode === this.state.country.countryShortCode)
             if (country && country.regions) {
                 states = [...country.regions]
@@ -2840,6 +2901,8 @@ class MyDetail extends React.Component {
         resetEmailSent: false
     }
 
+    myDetailApiCalled = false
+
     componentDidMount() {
         let userData = window.updateCurrentUserDetail()
         userData.then(data => {
@@ -2884,6 +2947,7 @@ class MyDetail extends React.Component {
     // Event Handlers
     editAccountDetailClickHandler = (ev) => {
         ev.preventDefault()
+        this.myDetailApiCalled = false
         this.setState({
             editAccountDetail: true,
             accountFirstName: this.state.userInfo.firstName ? this.state.userInfo.firstName : "",
@@ -2946,21 +3010,24 @@ class MyDetail extends React.Component {
             }
         }
 
-        apiGraphql(reqData).then(res => res.json())
-            .then(res => {
-                if (res.data && res.data.updateAccount) {
-                    this.setState({
-                        userInfo: res.data.updateAccount.user
-                    })
-                    this.clearEditState();
-                    toast("Details updated successfully.", "success")
-                }
-                if (res.errors) {
-                    toast("Error occurred while updating details.", "error")
-                    console.error({ ...res.errors })
-                }
-            })
-
+        if (!this.myDetailApiCalled){
+            this.myDetailApiCalled = true
+            apiGraphql(reqData).then(res => res.json())
+                .then(res => {
+                    if (res.data && res.data.updateAccount) {
+                        this.setState({
+                            userInfo: res.data.updateAccount.user
+                        })
+                        this.clearEditState();
+                        toast("Details updated successfully.", "success")
+                    }
+                    if (res.errors) {
+                        this.myDetailApiCalled = false
+                        toast("Error occurred while updating details.", "error")
+                        console.error({ ...res.errors })
+                    }
+                })
+        }
     }
 
     resetPasswordClickHandler = (ev) => {
@@ -3148,6 +3215,8 @@ class ShippingAddress extends React.Component {
         addressToRemove: null
     }
 
+    shippingAddressApiCalled = false
+
     getAddresses = async () => {
 
         let success = false
@@ -3263,7 +3332,7 @@ class ShippingAddress extends React.Component {
 
     editShippingAddressClickHandler = (ev, address = null) => {
         ev.preventDefault()
-
+        this.shippingAddressApiCalled = false
         let isDefaultAddress = null
         let defaultValues = {}
         if (address) {
@@ -3492,29 +3561,34 @@ class ShippingAddress extends React.Component {
             addAddress = true
         }
 
-        apiGraphql(reqData).then(res => res.json())
-            .then(res => {
-                if (res.data && res.data[mutationCalled].address) {
-                    let addressFetched = this.getAddresses()
-                    addressFetched.then(res => {
-                        if (res) {
-                            if (addAddress) {
-                                toast("Address added successfully.")
+        if (!this.shippingAddressApiCalled){
+            this.shippingAddressApiCalled = true
+            apiGraphql(reqData).then(res => res.json())
+                .then(res => {
+                    if (res.data && res.data[mutationCalled].address) {
+                        let addressFetched = this.getAddresses()
+                        addressFetched.then(res => {
+                            if (res) {
+                                if (addAddress) {
+                                    toast("Address added successfully.")
+                                } else {
+                                    toast("Address updated successfully.")
+                                }
+                                this.cancelClickHandler()
                             } else {
-                                toast("Address updated successfully.")
+                                toast("Address updated. Error occurred while fetching address.", "error")
                             }
-                            this.cancelClickHandler()
-                        } else {
-                            toast("Address updated. Error occurred while fetching address.", "error")
+                        })
+                    } else if (res.errors) {
+                        this.shippingAddressApiCalled = false
+                        for (let error of res.errors) {
+                            toast(error.message, "error")
                         }
-                    })
-                } else if (res.errors) {
-                    for (let error of res.errors) {
-                        toast(error.message, "error")
+                        console.error({ ...res.errors })
                     }
-                    console.error({ ...res.errors })
-                }
-            })
+                })
+        }
+
     }
 
     closeRemoveAddressModal = () => {
