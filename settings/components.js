@@ -650,6 +650,8 @@ class RegistryDetail extends React.Component {
 
     MAX_GREETINGS_LENGTH = 280
 
+    EXISTS_REGISTRY_URL_BACKEND_MSG = "The slug is already exist."
+
     state = {
         userInfo: {},
         registry: null,
@@ -897,9 +899,16 @@ class RegistryDetail extends React.Component {
                         this.registryDetailApiCalled = false
                         for (let error of res.errors) {
                             if (error.errors && error.errors.url_slug) {
-                                this.setState({
-                                    registryErrors: { registryLink: error.errors.url_slug }
-                                })
+
+                                if (String(error.errors.url_slug).toLowerCase() === this.EXISTS_REGISTRY_URL_BACKEND_MSG.toLowerCase()){
+                                    this.setState({
+                                        registryErrors: { registryLink: `${this.state.registryLink} is not available. Please try something else.` }
+                                    })
+                                } else {
+                                    this.setState({
+                                        registryErrors: { registryLink: error.errors.url_slug }
+                                    })
+                                }
                             }
                         }
         
@@ -1829,6 +1838,7 @@ class RegistryDetail extends React.Component {
 class BankDetail extends React.Component {
     DIGIT = /^[0-9]*$/g
     ALPHABET = /^[A-Za-z]+$/g
+    ALPHABET_WITH_SPACE = /^[A-Za-z]+(\s?[A-Za-z]*)*$/g
     // To watch input change handler
     PHONE_WITH_COUNTRY_CODE = /^\+\d{0,11}$/g
     PHONE_WITHOUT_COUNTRY_CODE = /^\d{0,10}$/g
@@ -1990,7 +2000,7 @@ class BankDetail extends React.Component {
             }
         }
 
-        if (this.state.phone.length > 0 && !(this.state.phone.match(this.PHONE_WITHOUT_COUNTRY_CODE_COMPLETE) || this.state.phone.match(this.PHONE_WITH_COUNTRY_CODE_COMPLETE))) {
+        if (this.state.phone.length > 0 && !(this.cleanPhoneNumber(this.state.phone).match(this.PHONE_WITHOUT_COUNTRY_CODE_COMPLETE) || this.cleanPhoneNumber(this.state.phone).match(this.PHONE_WITH_COUNTRY_CODE_COMPLETE))) {
             errors['phone'] = 'Invalid phone number';
             valid = false
         }
@@ -2034,6 +2044,42 @@ class BankDetail extends React.Component {
             bankAccountErrors: errors
         })
         return valid;
+    }
+
+    formatPhoneNumber = (phoneNumber) => {
+        // Formatting phone number in +1 202-302-1123 or 203-223-1234
+        let finalPhone = ""
+        if (phoneNumber.match(this.PHONE_WITH_COUNTRY_CODE)){
+            for (let ch in phoneNumber){
+                if (Number(ch) === 2) {
+                    finalPhone += " "
+                }
+                if (Number(ch) === 5){
+                    finalPhone += "-"
+                }
+                if (Number(ch) === 8){
+                    finalPhone += "-"
+                }
+                finalPhone += phoneNumber[ch]
+            }
+        } else if (phoneNumber.match(this.PHONE_WITHOUT_COUNTRY_CODE)){
+            for (let ch in phoneNumber){
+                if (Number(ch) === 3){
+                    finalPhone += "-"
+                }
+                if (Number(ch) === 6){
+                    finalPhone += "-"
+                }
+                finalPhone += phoneNumber[ch]
+            }
+        }
+        
+        return finalPhone
+    }
+
+    cleanPhoneNumber = (phoneNumber) => {
+        // Removing spaces and dashes
+        return String(phoneNumber).split("-").join("").split(" ").join("")
     }
 
     // Event Handlers
@@ -2125,7 +2171,7 @@ class BankDetail extends React.Component {
                     name: this.state.bankAccount[0].province
                 },
                 postalCode: this.state.bankAccount[0].zip,
-                phone: this.state.bankAccount[0].phone,
+                phone: this.formatPhoneNumber(this.state.bankAccount[0].phone),
                 dateOfBirth: this.state.bankAccount[0].dateOfBirth,
             }
         }
@@ -2249,7 +2295,7 @@ class BankDetail extends React.Component {
     }
 
     cityChangeHandler = async (ev) => {
-        if (ev.target.value.match(this.ALPHABET) || ev.target.value.length <= 0) {
+        if (ev.target.value.match(this.ALPHABET_WITH_SPACE) || ev.target.value.length <= 0) {
             let errors = { ...this.state.bankAccountErrors }
             if (errors.city) {
                 delete errors.city
@@ -2305,14 +2351,15 @@ class BankDetail extends React.Component {
     }
 
     phoneChangeHandler = async (ev) => {
-        if (ev.target.value.match(this.PHONE_WITH_COUNTRY_CODE) || ev.target.value.match(this.PHONE_WITHOUT_COUNTRY_CODE) || ev.target.value.length <= 0) {
+        let phoneNumber = this.cleanPhoneNumber(ev.target.value)
+        if (phoneNumber.match(this.PHONE_WITH_COUNTRY_CODE) || phoneNumber.match(this.PHONE_WITHOUT_COUNTRY_CODE) || phoneNumber.length <= 0) {
             let errors = { ...this.state.bankAccountErrors }
             if (errors.phone) {
                 delete errors.phone
             }
 
             await this.setState({
-                phone: ev.target.value,
+                phone: this.formatPhoneNumber(phoneNumber),
                 bankAccountErrors: errors
             })
             this.checkForSaveBtnState()
@@ -2372,7 +2419,7 @@ class BankDetail extends React.Component {
                     province: this.state.stateProvince.name,
                     country: this.state.country.countryName,
                     zip: this.state.postalCode,
-                    phone: this.state.phone,
+                    phone: this.cleanPhoneNumber(this.state.phone),
                     dateOfBirth: this.state.dateOfBirth,
                     tncAccepted: this.state.termsAccepted
                 }
@@ -2435,8 +2482,20 @@ class BankDetail extends React.Component {
         let bankAccountDetail = []
         let states = []
 
+        // Maximum date for DOB
+        let today = new Date();
+        let dd = today.getDate();
+        let mm = today.getMonth()+1; //January is 0!
+        let yyyy = today.getFullYear();
+        if(dd<10){
+                dd='0'+dd
+            } 
+            if(mm<10){
+                mm='0'+mm
+            } 
+        today = yyyy+'-'+mm+'-'+dd;
+
         if (this.state.editBankAccount && this.state.country && this.state.country.countryShortCode) {
-            console.log("asd")
             let country = window.countryRegionList.find(el => el.countryShortCode === this.state.country.countryShortCode)
             if (country && country.regions) {
                 states = [...country.regions]
@@ -2492,7 +2551,7 @@ class BankDetail extends React.Component {
                 },
                 {
                     label: (<span>Phone</span>),
-                    value: this.state.bankAccount[0].phone
+                    value: this.formatPhoneNumber(this.state.bankAccount[0].phone)
                 },
                 {
                     label: (<span>Date of Birth</span>),
@@ -2773,7 +2832,7 @@ class BankDetail extends React.Component {
                                                 onChange={(ev) => this.dateOfBirthChangeHandler(ev)}
                                                 type="date"
                                                 name="date-of-birth"
-                                                min={0}
+                                                max={today}
                                             />
                                             {this.state.bankAccountErrors.dateOfBirth ?
                                                 <label className="settings-input-error-message text-sm m-0">{this.state.bankAccountErrors.dateOfBirth}</label>
@@ -3180,6 +3239,7 @@ class MyDetail extends React.Component {
 class ShippingAddress extends React.Component {
     DIGIT = /^[0-9]*$/g
     ALPHABET = /^[A-Za-z]+$/g
+    ALPHABET_WITH_SPACE = /^[A-Za-z]+(\s?[A-Za-z]*)*$/g
     // To watch input change handler
     PHONE_WITH_COUNTRY_CODE = /^\+\d{0,11}$/g
     PHONE_WITHOUT_COUNTRY_CODE = /^\d{0,10}$/g
@@ -3187,6 +3247,8 @@ class ShippingAddress extends React.Component {
     // To validate complete phone number
     PHONE_WITH_COUNTRY_CODE_COMPLETE = /^\+\d{11}$/g
     PHONE_WITHOUT_COUNTRY_CODE_COMPLETE = /^\d{10}$/g
+
+    PIN_CODE_LENGTH = 5
 
     state = {
         registry: null,
@@ -3293,8 +3355,8 @@ class ShippingAddress extends React.Component {
             this.state.city.length > 0 &&
             this.state.stateProvince.name &&
             this.state.country.countryName &&
-            this.state.postalCode.length > 0 &&
-            this.state.phone.length > 0
+            this.state.postalCode.length === this.PIN_CODE_LENGTH &&
+            (this.cleanPhoneNumber(this.state.phone).match(this.PHONE_WITH_COUNTRY_CODE_COMPLETE) || this.cleanPhoneNumber(this.state.phone).match(this.PHONE_WITHOUT_COUNTRY_CODE_COMPLETE))
         ) {
             enableSave = true
         }
@@ -3319,6 +3381,42 @@ class ShippingAddress extends React.Component {
         return province;
     }
 
+    formatPhoneNumber = (phoneNumber) => {
+        // Formatting phone number in +1 202-302-1123 or 203-223-1234
+        let finalPhone = ""
+        if (phoneNumber.match(this.PHONE_WITH_COUNTRY_CODE)){
+            for (let ch in phoneNumber){
+                if (Number(ch) === 2) {
+                    finalPhone += " "
+                }
+                if (Number(ch) === 5){
+                    finalPhone += "-"
+                }
+                if (Number(ch) === 8){
+                    finalPhone += "-"
+                }
+                finalPhone += phoneNumber[ch]
+            }
+        } else if (phoneNumber.match(this.PHONE_WITHOUT_COUNTRY_CODE)){
+            for (let ch in phoneNumber){
+                if (Number(ch) === 3){
+                    finalPhone += "-"
+                }
+                if (Number(ch) === 6){
+                    finalPhone += "-"
+                }
+                finalPhone += phoneNumber[ch]
+            }
+        }
+        
+        return finalPhone
+    }
+
+    cleanPhoneNumber = (phoneNumber) => {
+        // Removing spaces and dashes
+        return String(phoneNumber).split("-").join("").split(" ").join("")
+    }
+
     // Event Handlers
 
     removeShippingAddressClickHandler = (ev, address = null) => {
@@ -3330,7 +3428,7 @@ class ShippingAddress extends React.Component {
         })
     }
 
-    editShippingAddressClickHandler = (ev, address = null) => {
+    editShippingAddressClickHandler = async (ev, address = null) => {
         ev.preventDefault()
         this.shippingAddressApiCalled = false
         let isDefaultAddress = null
@@ -3349,21 +3447,22 @@ class ShippingAddress extends React.Component {
             defaultValues['company'] = address.company ? address.company : "";
             defaultValues['addressLine1'] = address.address1 ? address.address1 : "";
             defaultValues['addressLine2'] = address.address2 ? address.address2 : "";
-            defaultValues['city'] = address.city ? address.city : "";
+            defaultValues['city'] = address.city ? String(address.city).trim() : "";
             defaultValues['country'] = country ? country : {};
             defaultValues['stateProvince'] = province ? province : {};
             defaultValues['postalCode'] = address.zip ? address.zip : {};
-            defaultValues['phone'] = address.phone ? address.phone : {};
+            defaultValues['phone'] = address.phone ? this.formatPhoneNumber(address.phone) : {};
             isDefaultAddress = address.isDefault;
         }
 
-        this.setState({
+        await this.setState({
             ...defaultValues,
             editShippingAddress: true,
             isDefaultAddress: isDefaultAddress !== null ? isDefaultAddress : this.state.addresses.length < 1,
             updateDefaultAddress: isDefaultAddress !== null ? !isDefaultAddress : this.state.addresses.length >= 1,
             enableSaveButton: isDefaultAddress ? true : false
         })
+        this.checkForSaveBtnState()
     }
 
     firstNameChangeHandler = async ev => {
@@ -3422,7 +3521,7 @@ class ShippingAddress extends React.Component {
     }
 
     cityChangeHandler = async (ev) => {
-        if (ev.target.value.match(this.ALPHABET) || ev.target.value.length <= 0) {
+        if (ev.target.value.match(this.ALPHABET_WITH_SPACE) || ev.target.value.length <= 0) {
             let errors = { ...this.state.addressErrors }
             if (errors.city) {
                 delete errors.city
@@ -3463,7 +3562,7 @@ class ShippingAddress extends React.Component {
     }
 
     postalCodeChangeHandler = async (ev) => {
-        if (ev.target.value.match(this.DIGIT) && ev.target.value.length <= 5) {
+        if (ev.target.value.match(this.DIGIT) && ev.target.value.length <= this.PIN_CODE_LENGTH) {
             let errors = { ...this.state.addressErrors }
             if (errors.postalCode) {
                 delete errors.postalCode
@@ -3478,14 +3577,15 @@ class ShippingAddress extends React.Component {
     }
 
     phoneChangeHandler = async (ev) => {
-        if (ev.target.value.match(this.PHONE_WITH_COUNTRY_CODE) || ev.target.value.match(this.PHONE_WITHOUT_COUNTRY_CODE) || ev.target.value.length <= 0) {
+        let phoneNumber = this.cleanPhoneNumber(ev.target.value)
+        if (phoneNumber.match(this.PHONE_WITH_COUNTRY_CODE) || phoneNumber.match(this.PHONE_WITHOUT_COUNTRY_CODE) || phoneNumber.length <= 0) {
             let errors = { ...this.state.addressErrors }
             if (errors.phone) {
                 delete errors.phone
             }
 
             await this.setState({
-                phone: ev.target.value,
+                phone: this.formatPhoneNumber(phoneNumber),
                 addressErrors: errors
             })
             this.checkForSaveBtnState()
@@ -3544,7 +3644,7 @@ class ShippingAddress extends React.Component {
                     provinceCode: this.state.stateProvince.shortCode,
                     countryCode: this.state.country.countryShortCode,
                     zip: this.state.postalCode,
-                    phone: this.state.phone,
+                    phone: this.cleanPhoneNumber(this.state.phone),
                     isDefault: this.state.isDefaultAddress
                 }
             }
@@ -3684,7 +3784,7 @@ class ShippingAddress extends React.Component {
                 },
                 {
                     label: (<span>Phone</span>),
-                    value: `${address.phone ? address.phone : "-"}`
+                    value: `${address.phone ? this.formatPhoneNumber(address.phone) : "-"}`
                 }
             ]
             return {
@@ -3852,6 +3952,7 @@ class ShippingAddress extends React.Component {
                                             onChange={(ev) => this.postalCodeChangeHandler(ev)}
                                             type="text"
                                             name="postal-code"
+                                            placeholder="10001"
                                             min={0}
                                         />
                                         {this.state.addressErrors.postalCode ?
@@ -3870,6 +3971,7 @@ class ShippingAddress extends React.Component {
                                             value={this.state.phone}
                                             onChange={(ev) => this.phoneChangeHandler(ev)}
                                             type="text"
+                                            placeholder="202-555-0126"
                                             name="phone"
                                         />
                                         {this.state.addressErrors.phone ?
