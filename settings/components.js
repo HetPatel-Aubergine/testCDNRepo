@@ -1892,6 +1892,13 @@ class BankDetail extends React.Component {
         { value: "LOAN", label: "Loan", backendValue: "loan" }
     ]
 
+    // Account Error mapping backend
+    backendErrors = {
+        bank_account_type : "accountType",
+        routing_number : "routingNumber",
+        account_number : "accountNumber"
+    }
+
     mandatoryFields = [
         'routingNumber',
         'accountNumber',
@@ -2452,12 +2459,23 @@ class BankDetail extends React.Component {
                     if (res.errors) {
                         this.bankAccountApiCalled = false
                         for (let error of res.errors) {
-                            if (error.errors) {
-                                toast(error.errors.message, "error")
+                            if (error.errors && Object.keys(error.errors).length > 0){
+                                for (let fieldError of Object.keys(error.errors)) {
+                                    if (Object.keys(this.backendErrors).indexOf(fieldError) !== -1){
+                                        let errorState = {...this.state.bankAccountErrors}
+                                        if (error.errors[fieldError].length > 0) {
+                                            errorState[this.backendErrors[fieldError]] = error.errors[fieldError][0]
+                                        } else {
+                                            toast("Some error occurred", "error")
+                                        }
+                                        this.setState({
+                                            bankAccountErrors: errorState
+                                        })
+                                    }
+                                }
                             } else {
                                 toast(error.message, "error")
                             }
-    
                         }
                         console.error({ ...res.errors })
                     }
