@@ -73,6 +73,10 @@
   cursor: pointer;
 }
 
+.m-a-settings .checkbox.ma-disabled-checkbox {
+  opacity: 0.5 !important;
+}
+
 .m-a-settings .checkbox .checkbox__input {
   display: -ms-grid;
   display: grid;

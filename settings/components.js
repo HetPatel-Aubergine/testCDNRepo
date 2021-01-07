@@ -623,7 +623,7 @@ const ModalComponent = (props) => {
 
 const CheckBox = (props) => {
     return (
-        <label className={["checkbox d-flex align-items-center", props.className ? props.className : ""].join(" ")}>
+        <label className={["checkbox d-flex align-items-center", props.className ? props.className : "", props.disabled ? "ma-disabled-checkbox" : ""].join(" ")}>
             <span className="checkbox__input mr-2">
                 <input
                     type="checkbox"
@@ -3272,6 +3272,7 @@ class ShippingAddress extends React.Component {
         registry: null,
         addresses: [],
         editShippingAddress: false,
+        shippingDetailChanged: false,
         editAddressId: null,
         addressErrors: {},
         firstName: "",
@@ -3374,7 +3375,8 @@ class ShippingAddress extends React.Component {
             this.state.stateProvince.name &&
             this.state.country.countryName &&
             this.state.postalCode.length === this.PIN_CODE_LENGTH &&
-            (this.cleanPhoneNumber(this.state.phone).match(this.PHONE_WITH_COUNTRY_CODE_COMPLETE) || this.cleanPhoneNumber(this.state.phone).match(this.PHONE_WITHOUT_COUNTRY_CODE_COMPLETE))
+            (this.cleanPhoneNumber(this.state.phone).match(this.PHONE_WITH_COUNTRY_CODE_COMPLETE) || this.cleanPhoneNumber(this.state.phone).match(this.PHONE_WITHOUT_COUNTRY_CODE_COMPLETE) &&
+            this.state.shippingDetailChanged)
         ) {
             enableSave = true
         }
@@ -3492,7 +3494,8 @@ class ShippingAddress extends React.Component {
 
             await this.setState({
                 firstName: ev.target.value,
-                addressErrors: errors
+                addressErrors: errors,
+                shippingDetailChanged: true
             })
             this.checkForSaveBtnState()
         }
@@ -3507,7 +3510,8 @@ class ShippingAddress extends React.Component {
 
             await this.setState({
                 lastName: ev.target.value,
-                addressErrors: errors
+                addressErrors: errors,
+                shippingDetailChanged: true
             })
             this.checkForSaveBtnState()
         }
@@ -3515,7 +3519,8 @@ class ShippingAddress extends React.Component {
 
     companyChangeHandler = ev => {
         this.setState({
-            company: ev.target.value
+            company: ev.target.value,
+            shippingDetailChanged: true
         })
     }
 
@@ -3527,14 +3532,16 @@ class ShippingAddress extends React.Component {
 
         await this.setState({
             addressLine1: ev.target.value,
-            addressErrors: errors
+            addressErrors: errors,
+            shippingDetailChanged: true
         })
         this.checkForSaveBtnState()
     }
 
     addressLine2ChangeHandler = (ev) => {
         this.setState({
-            addressLine2: ev.target.value
+            addressLine2: ev.target.value,
+            shippingDetailChanged: true
         })
     }
 
@@ -3546,7 +3553,8 @@ class ShippingAddress extends React.Component {
             }
             await this.setState({
                 city: ev.target.value,
-                addressErrors: errors
+                addressErrors: errors,
+                shippingDetailChanged: true
             })
             this.checkForSaveBtnState()
         }
@@ -3569,7 +3577,8 @@ class ShippingAddress extends React.Component {
 
         await this.setState({
             stateProvince: value,
-            addressErrors: errors
+            addressErrors: errors,
+            shippingDetailChanged: true
         })
         this.checkForSaveBtnState()
 
@@ -3588,7 +3597,8 @@ class ShippingAddress extends React.Component {
 
             await this.setState({
                 postalCode: ev.target.value,
-                addressErrors: errors
+                addressErrors: errors,
+                shippingDetailChanged: true
             })
             this.checkForSaveBtnState()
         }
@@ -3604,7 +3614,8 @@ class ShippingAddress extends React.Component {
 
             await this.setState({
                 phone: this.formatPhoneNumber(phoneNumber),
-                addressErrors: errors
+                addressErrors: errors,
+                shippingDetailChanged: true
             })
             this.checkForSaveBtnState()
         }
@@ -3613,7 +3624,8 @@ class ShippingAddress extends React.Component {
     addressDefaultChangeHandler = () => {
         if (this.state.updateDefaultAddress) {
             this.setState((prevState, _) => ({
-                isDefaultAddress: !prevState.isDefaultAddress
+                isDefaultAddress: !prevState.isDefaultAddress,
+                shippingDetailChanged: true
             }))
         }
     }
@@ -3641,7 +3653,8 @@ class ShippingAddress extends React.Component {
             postalCode: "",
             phone: "",
             isDefaultAddress: false,
-            enableSaveButton: false
+            enableSaveButton: false,
+            shippingDetailChanged: false
         })
     }
 
@@ -4006,6 +4019,7 @@ class ShippingAddress extends React.Component {
                                         textClass="text-sm"
                                         className="shipping-address-default-checkbox"
                                         checked={this.state.isDefaultAddress}
+                                        disabled={!this.state.updateDefaultAddress}
                                         changeHandler={this.addressDefaultChangeHandler}
                                     />
                                 </div>
