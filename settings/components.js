@@ -1888,8 +1888,8 @@ class BankDetail extends React.Component {
     bankAccountType = [
         { value: "CHECKING", label: "Checking", backendValue: "checking" },
         { value: "SAVINGS", label: "Savings", backendValue: "savings" },
-        { value: "GENERAL_LEDGER", label: "General ledger", backendValue: "general-ledger" },
-        { value: "LOAN", label: "Loan", backendValue: "loan" }
+        // { value: "GENERAL_LEDGER", label: "General ledger", backendValue: "general-ledger" },
+        // { value: "LOAN", label: "Loan", backendValue: "loan" }
     ]
 
     // Account Error mapping backend
