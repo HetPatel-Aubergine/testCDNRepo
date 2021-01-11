@@ -645,7 +645,7 @@ const CheckBox = (props) => {
 
 class RegistryDetail extends React.Component {
 
-    EMAIL_RE = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
+    EMAIL_RE = /^[\w-+\.]+@([\w-]+\.)+[\w-]{2,4}$/g
     ALPHABET = /^[A-Za-z]+$/g
 
     MAX_GREETINGS_LENGTH = 280
@@ -2608,9 +2608,12 @@ class BankDetail extends React.Component {
                                                 <button className={["custom-select-trigger w-100 text-left text-body", this.state.bankAccountErrors.accountType ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("bankAccountTypeSelectContainer")}>{this.state.accountType.label ? this.state.accountType.label : "Select account type"}</button>
                                                 <div className="custom-select-container" id="bankAccountTypeSelectContainer">
                                                     <ul className="custom-select-lists w-100 p-0">
-                                                        {this.bankAccountType.map(accountType => (
-                                                            <li onClick={() => this.accountTypeChangeHandler(accountType, "bankAccountTypeSelectContainer")}>{accountType.label}</li>
-                                                        ))}
+                                                        {this.bankAccountType.map(accountType => {
+                                                            if (this.state.accountType.label && this.state.accountType.label === accountType.label){
+                                                                return null
+                                                            }
+                                                            return ( <li onClick={() => this.accountTypeChangeHandler(accountType, "bankAccountTypeSelectContainer")}>{accountType.label}</li>)
+                                                        })}
                                                     </ul>
                                                 </div>
                                             </div>
@@ -2964,7 +2967,7 @@ class BankDetail extends React.Component {
 }
 
 class MyDetail extends React.Component {
-    EMAIL_RE = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
+    EMAIL_RE = /^[\w-+\.]+@([\w-]+\.)+[\w-]{2,4}$/g
     ALPHABET = /^[A-Za-z]+$/g
 
     state = {
@@ -3621,13 +3624,14 @@ class ShippingAddress extends React.Component {
         }
     }
 
-    addressDefaultChangeHandler = () => {
+    addressDefaultChangeHandler = async () => {
         if (this.state.updateDefaultAddress) {
-            this.setState((prevState, _) => ({
+            await this.setState((prevState, _) => ({
                 isDefaultAddress: !prevState.isDefaultAddress,
                 shippingDetailChanged: true
             }))
         }
+        this.checkForSaveBtnState()
     }
 
     cancelClickHandler = (ev = null) => {

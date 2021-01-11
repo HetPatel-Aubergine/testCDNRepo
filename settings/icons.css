@@ -1,8 +1,8 @@
 @charset "UTF-8";
 @font-face {
   font-family: "mbr-icons";
-  src: url("https://cdn.jsdelivr.net/gh/HetPatel-Aubergine/testCDNRepo/fonts//mbr-icons.eot?72nh2l");
-  src: url("https://cdn.jsdelivr.net/gh/HetPatel-Aubergine/testCDNRepo/fonts//mbr-icons.eot?72nh2l#iefix") format("embedded-opentype"), url("https://cdn.jsdelivr.net/gh/HetPatel-Aubergine/testCDNRepo/fonts//mbr-icons.ttf?72nh2l") format("truetype"), url("https://cdn.jsdelivr.net/gh/HetPatel-Aubergine/testCDNRepo/fonts//mbr-icons.woff?72nh2l") format("woff"), url("https://cdn.jsdelivr.net/gh/HetPatel-Aubergine/testCDNRepo/fonts//mbr-icons.svg?72nh2l#mbr-icons") format("svg");
+  src: url("https://registry-cdn.monicaandandy.com/fonts//mbr-icons.eot?72nh2l");
+  src: url("https://registry-cdn.monicaandandy.com/fonts//mbr-icons.eot?72nh2l#iefix") format("embedded-opentype"), url("https://registry-cdn.monicaandandy.com/fonts//mbr-icons.ttf?72nh2l") format("truetype"), url("https://registry-cdn.monicaandandy.com/fonts//mbr-icons.woff?72nh2l") format("woff"), url("https://registry-cdn.monicaandandy.com/fonts//mbr-icons.svg?72nh2l#mbr-icons") format("svg");
   font-weight: normal;
   font-style: normal;
   font-display: block;

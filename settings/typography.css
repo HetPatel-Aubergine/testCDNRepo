@@ -1,18 +1,18 @@
 @font-face {
   font-family: "freightregular";
-  src: url("https://cdn.jsdelivr.net/gh/HetPatel-Aubergine/testCDNRepo/fonts/Freight Micro Book.otf");
+  src: url("https://registry-cdn.monicaandandy.com/fonts/Freight Micro Book.otf");
   font-display: swap;
 }
 
 @font-face {
   font-family: "Gotham-Book";
-  src: url("https://cdn.jsdelivr.net/gh/HetPatel-Aubergine/testCDNRepo/fonts/gotham_book.ttf");
+  src: url("https://registry-cdn.monicaandandy.com/fonts/gotham_book.ttf");
   font-display: swap;
 }
 
 @font-face {
   font-family: "Gotham-Medium";
-  src: url("https://cdn.jsdelivr.net/gh/HetPatel-Aubergine/testCDNRepo/fonts/gotham_book.ttf");
+  src: url("https://registry-cdn.monicaandandy.com/fonts/gotham_book.ttf");
   font-display: swap;
 }
 
