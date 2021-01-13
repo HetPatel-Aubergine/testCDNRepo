@@ -529,4 +529,28 @@
 .settings-input-container .settings-radio-input:first-child {
   margin-top: 6px;
 }
+
+.ma-loader-class {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  z-index: 99999;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.ma-loader-class .MA-loader-spinner {
+  border: 0.2em solid #d2d3d5 !important;
+  border-right-color: #000000 !important;
+}
 /*# sourceMappingURL=settings.css.map */

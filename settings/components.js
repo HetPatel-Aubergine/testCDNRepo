@@ -2384,6 +2384,7 @@ class BankDetail extends React.Component {
 
     cancelClickHandler = (ev) => {
         ev.preventDefault()
+        scrollToTop();
         let clearData = this.getClearState()
         this.setState({
             ...clearData,

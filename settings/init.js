@@ -85,6 +85,29 @@ getCookie = (cname) => {
     return "";
 }
 
+// Loader Handlers
+startLoader = () => {
+    let loaderEl = document.querySelector("#ma-account-loader") 
+    if (!loaderEl){
+        loaderEl = document.createElement("div")
+        loaderEl.setAttribute("id", "ma-account-loader")
+        loaderEl.setAttribute("class", "ma-loader-class")
+        loaderEl.innerHTML = `
+        <div class="MA-loader-spinner spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        `
+        document.body.appendChild(loaderEl)
+    }
+}
+
+endLoader = () => {
+    let loaderEl = document.querySelector("#ma-account-loader") 
+    if (loaderEl) {
+        document.body.removeChild(loaderEl)
+    }
+}
+
 //  Updating Registry detail
 updateRegistryDetail = async () => {
     let access_token = getCookie(CONSTANTS.ACCESS_COOKIE_NAME)
@@ -184,6 +207,7 @@ updateCurrentUserDetail = async () => {
 }
 
 getRegistry = async () => {
+    startLoader();
     let registryData = await updateRegistryDetail();
     return registryData;
 }
@@ -201,6 +225,7 @@ updateLinkActiveState = () => {
 }
 
 getRegistry().then(res => {
+    endLoader();
     if (res.id){
         // Loading Sidebar registry links only if user have registry
         let sidebarRegistryElement = document.getElementById('settings-sidebar-registry');
