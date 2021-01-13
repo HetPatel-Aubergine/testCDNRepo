@@ -425,7 +425,6 @@ var ADD_BANK_ACCOUNT = `
             country,
             zip,
             phone,
-            dateOfBirth,
             tncAccepted
         }
         }
@@ -450,7 +449,6 @@ var UPDATE_BANK_ACCOUNT = `
             country,
             zip,
             phone,
-            dateOfBirth,
             tncAccepted
         }
         }
@@ -518,6 +516,10 @@ mutation deleteAddress($addressId: ID!){
 `
 
 // Common Components
+
+const scrollToTop = () => {
+    window.scrollTo(0,0)
+}
 
 const toast = (message, type = "success") => {
     let toastClass = "settings-toast-"
@@ -1566,7 +1568,7 @@ class RegistryDetail extends React.Component {
                     {/* Children */}
                     <div className="registry-children-section">
                         <div className="settings-component-headers">
-                            <h3 className="d-inline-block mr-1">Chile(ren)</h3>
+                            <h3 className="d-inline-block mr-1">Child(ren)</h3>
                             {!this.state.editChildrenInfo ? <a href="#" onClick={(ev) => this.editChildrenClickHandler(ev)} className="settings-link text-sm font-medium">Edit</a> : null}
                         </div>
 
@@ -1575,7 +1577,7 @@ class RegistryDetail extends React.Component {
                                 <div className="row">
                                     <div className="col-7">
                                         <div className="settings-input-container">
-                                            <label className="settings-input-label text-sm font-medium m-0">Due Date</label>
+                                            <label className="settings-input-label text-sm settings-input-required font-medium m-0">Due Date</label>
                                             <input
                                                 className={["settings-input text-body mw-100 w-100", this.state.childErrors.dueDate ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.dueDate}
@@ -1589,7 +1591,7 @@ class RegistryDetail extends React.Component {
                                     </div>
                                     <div className="col-3">
                                         <div className="settings-input-container">
-                                            <label className="settings-input-label text-sm font-medium m-0">No. of Children</label>
+                                            <label className="settings-input-label text-sm font-medium settings-input-required m-0">No. of Children</label>
                                             <div className="custom-select-input">
                                                 <button className={["custom-select-trigger w-100 text-left", this.state.childErrors.childrenCount ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("childCountSelectContainer")}>{this.state.childrenCount.value ? this.state.childrenCount.value : "Select No. of Children"}</button>
                                                 <div className="custom-select-container" id="childCountSelectContainer">
@@ -1878,7 +1880,6 @@ class BankDetail extends React.Component {
         stateProvince: {},
         postalCode: "",
         phone: "",
-        dateOfBirth: "",
         termsAccepted: false,
     }
 
@@ -1908,8 +1909,7 @@ class BankDetail extends React.Component {
         'addressLine1',
         'city',
         'postalCode',
-        'phone',
-        'dateOfBirth',
+        'phone'
     ]
 
     getClearState = () => {
@@ -1933,7 +1933,6 @@ class BankDetail extends React.Component {
             stateProvince: {},
             postalCode: "",
             phone: "",
-            dateOfBirth: "",
             termsAccepted: false
         }
     }
@@ -1984,7 +1983,6 @@ class BankDetail extends React.Component {
             this.state.stateProvince.name &&
             this.state.postalCode.length > 0 &&
             this.state.phone.length > 0 &&
-            this.state.dateOfBirth.length > 0 &&
             this.state.termsAccepted
         ) {
             enableSave = true
@@ -2178,8 +2176,7 @@ class BankDetail extends React.Component {
                     name: this.state.bankAccount[0].province
                 },
                 postalCode: this.state.bankAccount[0].zip,
-                phone: this.formatPhoneNumber(this.state.bankAccount[0].phone),
-                dateOfBirth: this.state.bankAccount[0].dateOfBirth,
+                phone: this.formatPhoneNumber(this.state.bankAccount[0].phone)
             }
         }
 
@@ -2373,18 +2370,6 @@ class BankDetail extends React.Component {
         }
     }
 
-    dateOfBirthChangeHandler = async (ev) => {
-        let errors = { ...this.state.bankAccountErrors }
-        if (errors.dateOfBirth) {
-            delete errors.dateOfBirth
-        }
-        await this.setState({
-            dateOfBirth: ev.target.value,
-            bankAccountErrors: errors
-        })
-        this.checkForSaveBtnState()
-    }
-
     termsAcceptedChangeHandler = async () => {
         let errors = { ...this.state.bankAccountErrors }
         if (errors.termsAccepted) {
@@ -2408,6 +2393,7 @@ class BankDetail extends React.Component {
 
     saveBankAccountClickHandler = () => {
         if (!this.validData()) {
+            scrollToTop();
             return
         }
 
@@ -2427,7 +2413,6 @@ class BankDetail extends React.Component {
                     country: this.state.country.countryName,
                     zip: this.state.postalCode,
                     phone: this.cleanPhoneNumber(this.state.phone),
-                    dateOfBirth: this.state.dateOfBirth,
                     tncAccepted: this.state.termsAccepted
                 }
             }
@@ -2457,6 +2442,7 @@ class BankDetail extends React.Component {
                     }
     
                     if (res.errors) {
+                        scrollToTop();
                         this.bankAccountApiCalled = false
                         for (let error of res.errors) {
                             if (error.errors && Object.keys(error.errors).length > 0){
@@ -2570,10 +2556,6 @@ class BankDetail extends React.Component {
                 {
                     label: (<span>Phone</span>),
                     value: this.formatPhoneNumber(this.state.bankAccount[0].phone)
-                },
-                {
-                    label: (<span>Date of Birth</span>),
-                    value: this.state.bankAccount[0].dateOfBirth
                 }
             ]
         }
@@ -2797,9 +2779,12 @@ class BankDetail extends React.Component {
                                                 <button className={["custom-select-trigger w-100 text-left text-body", this.state.bankAccountErrors.stateProvince ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("stateSelectContainer")}>{this.state.stateProvince.name ? this.state.stateProvince.name : "Select State/Province"}</button>
                                                 <div className="custom-select-container" id="stateSelectContainer">
                                                     <ul className="custom-select-lists w-100 p-0">
-                                                        {states.map(state => (
-                                                            <li onClick={() => this.stateProvinceChangeHandler(state, "stateSelectContainer")}>{state.name}</li>
-                                                        ))}
+                                                        {states.map(state => {
+                                                            if (this.state.stateProvince.name && this.state.stateProvince.name === state.name){
+                                                                return null
+                                                            }
+                                                            return (<li onClick={() => this.stateProvinceChangeHandler(state, "stateSelectContainer")}>{state.name}</li>)
+                                                        })}
                                                     </ul>
                                                 </div>
                                             </div>
@@ -2843,23 +2828,7 @@ class BankDetail extends React.Component {
                                                 <label className="settings-input-error-message text-sm m-0">{this.state.bankAccountErrors.phone}</label>
                                                 : null}
                                         </div>
-                                    </div>
-                                    <div className="col-6">
-                                        <div className="settings-input-container input-container-margin">
-                                            <label className="settings-input-label settings-input-required text-sm font-medium m-0">Date of Birth</label>
-                                            <input
-                                                className={["settings-input text-body mw-100 w-100 mb-0", this.state.bankAccountErrors.dateOfBirth ? 'settings-input-error' : ''].join(" ")}
-                                                value={this.state.dateOfBirth}
-                                                onChange={(ev) => this.dateOfBirthChangeHandler(ev)}
-                                                type="date"
-                                                name="date-of-birth"
-                                                max={today}
-                                            />
-                                            {this.state.bankAccountErrors.dateOfBirth ?
-                                                <label className="settings-input-error-message text-sm m-0">{this.state.bankAccountErrors.dateOfBirth}</label>
-                                                : null}
-                                        </div>
-                                    </div>
+                                    </div>                                    
                                 </div>
 
                                 <div className="row">
@@ -3453,6 +3422,7 @@ class ShippingAddress extends React.Component {
 
     editShippingAddressClickHandler = async (ev, address = null) => {
         ev.preventDefault()
+        scrollToTop()
         this.shippingAddressApiCalled = false
         let isDefaultAddress = null
         let defaultValues = {}
@@ -3715,6 +3685,7 @@ class ShippingAddress extends React.Component {
                             }
                         })
                     } else if (res.errors) {
+                        scrollToTop()
                         this.shippingAddressApiCalled = false
                         for (let error of res.errors) {
                             toast(error.message, "error")
@@ -3967,9 +3938,12 @@ class ShippingAddress extends React.Component {
                                             <button className={["custom-select-trigger w-100 text-left text-body", this.state.addressErrors.stateProvince ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("stateSelectContainer")}>{this.state.stateProvince.name ? this.state.stateProvince.name : "Select State/Province"}</button>
                                             <div className="custom-select-container" id="stateSelectContainer">
                                                 <ul className="custom-select-lists w-100 p-0">
-                                                    {states.map(state => (
-                                                        <li onClick={() => this.stateProvinceChangeHandler(state, "stateSelectContainer")}>{state.name}</li>
-                                                    ))}
+                                                    {states.map(state => {
+                                                        if (this.state.stateProvince.name && this.state.stateProvince.name === state.name){
+                                                            return null
+                                                        }
+                                                        return (<li onClick={() => this.stateProvinceChangeHandler(state, "stateSelectContainer")}>{state.name}</li>)
+                                                    })}
                                                 </ul>
                                             </div>
                                         </div>
