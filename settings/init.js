@@ -87,7 +87,7 @@ getCookie = (cname) => {
 
 // Loader Handlers
 startLoader = () => {
-    let loaderEl = document.querySelector("#ma-account-loader") 
+    let loaderEl = document.querySelector("#ma-account-loader")
     if (!loaderEl){
         loaderEl = document.createElement("div")
         loaderEl.setAttribute("id", "ma-account-loader")
@@ -102,7 +102,7 @@ startLoader = () => {
 }
 
 endLoader = () => {
-    let loaderEl = document.querySelector("#ma-account-loader") 
+    let loaderEl = document.querySelector("#ma-account-loader")
     if (loaderEl) {
         document.body.removeChild(loaderEl)
     }
@@ -131,39 +131,6 @@ updateRegistryDetail = async () => {
                     if (res.data.registries?.edges && res.data.registries.edges.length > 0) {
                         registryDetail = res.data.registries.edges[res.data.registries.edges.length - 1].node;
                         returnData = registryDetail;
-                    }
-                } else if (res.errors) {
-                    // Error
-                    console.error(res.errors)
-                }
-            })
-    }
-    return returnData
-}
-
-//  Updating Registry detail
-updateRegistryDetail = async () => {
-    let access_token = getCookie(CONSTANTS.ACCESS_COOKIE_NAME)
-    let returnData = null
-    if (access_token) {
-        let reqData = {
-            query: GET_REGISTRY
-        }
-
-        let response = await fetch(CONSTANTS.API_ENDPOINT_GRAPHQL, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                'Authorization': `Token ${access_token}`
-            },
-            body: JSON.stringify(reqData)
-        }).then(res => res.json())
-            .then(res => {
-                if (res.data) {
-                    // Success
-                    if (res.data.registries?.edges && res.data.registries.edges.length > 0) {
-                        // Getting last registry detail
-                        returnData = res.data.registries.edges[res.data.registries.edges.length - 1].node;
                     }
                 } else if (res.errors) {
                     // Error
@@ -226,7 +193,7 @@ updateLinkActiveState = () => {
 
 getRegistry().then(res => {
     endLoader();
-    if (res.id){
+    if (res && res.id){
         // Loading Sidebar registry links only if user have registry
         let sidebarRegistryElement = document.getElementById('settings-sidebar-registry');
         sidebarRegistryElement.innerHTML = `
