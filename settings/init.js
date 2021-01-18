@@ -182,7 +182,10 @@ getRegistry = async () => {
 
 updateLinkActiveState = () => {
     let s = new URLSearchParams(window.location.search)
-    const activeContentLink = document.querySelector(`#${s.get('content')}`)
+    let activeContentLink = document.querySelector(`#${s.get('content')}`)
+    if (!activeContentLink){
+      activeContentLink = document.querySelector(`#${s.get('view')}`)
+    }
 
     if (activeContentLink){
         activeContentLink.classList.toggle('font-medium')
