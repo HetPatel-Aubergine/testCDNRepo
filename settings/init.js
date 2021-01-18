@@ -176,6 +176,7 @@ updateCurrentUserDetail = async () => {
 getRegistry = async () => {
     startLoader();
     let registryData = await updateRegistryDetail();
+    endLoader();
     return registryData;
 }
 
@@ -192,7 +193,6 @@ updateLinkActiveState = () => {
 }
 
 getRegistry().then(res => {
-    endLoader();
     if (res && res.id){
         // Loading Sidebar registry links only if user have registry
         let sidebarRegistryElement = document.getElementById('settings-sidebar-registry');
