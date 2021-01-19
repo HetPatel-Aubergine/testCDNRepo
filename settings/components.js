@@ -518,7 +518,7 @@ mutation deleteAddress($addressId: ID!){
 // Common Components
 
 const scrollToTop = () => {
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0)
 }
 
 const toast = (message, type = "success") => {
@@ -692,6 +692,7 @@ class RegistryDetail extends React.Component {
     registryDetailApiCalled = false
     childrenDetailApiCalled = false
     partnerDetailApiCalled = false
+    resendEmailApiCalled = false
 
     CHILDREN_COUNT_LIST = [
         { key: 'One', value: 'One' },
@@ -879,7 +880,7 @@ class RegistryDetail extends React.Component {
             }
         }
 
-        if (!this.registryDetailApiCalled){
+        if (!this.registryDetailApiCalled) {
             this.registryDetailApiCalled = true
             apiGraphql(reqData).then(res => res.json())
                 .then(res => {
@@ -902,7 +903,7 @@ class RegistryDetail extends React.Component {
                         for (let error of res.errors) {
                             if (error.errors && error.errors.url_slug) {
 
-                                if (String(error.errors.url_slug).toLowerCase() === this.EXISTS_REGISTRY_URL_BACKEND_MSG.toLowerCase()){
+                                if (String(error.errors.url_slug).toLowerCase() === this.EXISTS_REGISTRY_URL_BACKEND_MSG.toLowerCase()) {
                                     this.setState({
                                         registryErrors: { registryLink: `${this.state.registryLink} is not available. Please try something else.` }
                                     })
@@ -913,7 +914,7 @@ class RegistryDetail extends React.Component {
                                 }
                             }
                         }
-        
+
                         console.error({ ...res.errors })
                     }
                 })
@@ -946,6 +947,11 @@ class RegistryDetail extends React.Component {
 
         if (this.state.dueDate.length <= 0) {
             errors['dueDate'] = "This field is required"
+            valid = false
+        }
+
+        if (this.state.gender.length <= 0) {
+            errors['gender'] = "This field is required"
             valid = false
         }
 
@@ -1023,11 +1029,12 @@ class RegistryDetail extends React.Component {
             delete errors.childrenCount
         }
 
-        this.setState({
+        this.setState((prevState, _) => ({
             childrenCount: value,
             editChildrenInfoChanged: true,
-            childErrors: errors
-        })
+            childErrors: errors,
+            gender: value.key === "One" && prevState.gender === "Both" ? "" : prevState.gender
+        }))
 
         let parentContainer = document.getElementById(parentContainerId)
         if (parentContainer) {
@@ -1089,7 +1096,7 @@ class RegistryDetail extends React.Component {
             }
         }
 
-        if (!this.childrenDetailApiCalled){
+        if (!this.childrenDetailApiCalled) {
             this.childrenDetailApiCalled = true
             apiGraphql(reqData).then(res => res.json())
                 .then(res => {
@@ -1295,20 +1302,23 @@ class RegistryDetail extends React.Component {
         let reqData = {
             query: window.RESEND_INVITATION_EMAIL
         }
-
-        apiGraphql(reqData).then(res => res.json())
-            .then(res => {
-                if (res.data) {
-                    if (res.data.resendPartnerInvite) {
-                        toast("Invitation mail sent successfully")
+        if (!this.resendEmailApiCalled) {
+            this.resendEmailApiCalled = true;
+            apiGraphql(reqData).then(res => res.json())
+                .then(res => {
+                    if (res.data) {
+                        if (res.data.resendPartnerInvite) {
+                            toast("Invitation mail sent successfully")
+                        }
+                    } else if (res.errors) {
+                        for (let error of res.errors) {
+                            toast(error.message, "error")
+                        }
+                        console.error({ ...res.errors })
                     }
-                } else if (res.errors) {
-                    for (let error of res.errors) {
-                        toast(error.message, "error")
-                    }
-                    console.error({ ...res.errors })
-                }
-            })
+                    this.resendEmailApiCalled = false
+                })
+        }
     }
 
     removePartnerAccount = () => {
@@ -1633,17 +1643,17 @@ class RegistryDetail extends React.Component {
                                                         <p className="text-body">Girl</p>
                                                     </div>
                                                 </RadioButton>
-
-                                                <RadioButton
-                                                    className="settings-radio-input"
-                                                    checked={false}
-                                                    checked={this.state.gender && this.state.gender === "Both"}
-                                                    changeHandler={() => this.childGenderChangeHandler("Both")}
-                                                >
-                                                    <div>
-                                                        <p className="text-body">Both</p>
-                                                    </div>
-                                                </RadioButton>
+                                                {this.state.childrenCount && this.state.childrenCount.key !== "One" ?
+                                                    <RadioButton
+                                                        className="settings-radio-input"
+                                                        checked={this.state.gender && this.state.gender === "Both"}
+                                                        changeHandler={() => this.childGenderChangeHandler("Both")}
+                                                    >
+                                                        <div>
+                                                            <p className="text-body">Both</p>
+                                                        </div>
+                                                    </RadioButton>                                                    
+                                                    : null}
 
                                                 <RadioButton
                                                     className="settings-radio-input"
@@ -1654,6 +1664,9 @@ class RegistryDetail extends React.Component {
                                                         <p className="text-body">It’s a surprise!</p>
                                                     </div>
                                                 </RadioButton>
+                                                {this.state.childErrors.gender ?
+                                                        <label className="settings-input-error-message text-sm m-0">{this.state.childErrors.gender}</label>
+                                                        : null}
                                             </div>
                                         </div>
                                     </div>
@@ -1770,7 +1783,7 @@ class RegistryDetail extends React.Component {
                                         <Button
                                             className="settings-edit-footer-button text-body font-medium"
                                             onClick={this.savePartnerDetailClickHandler}
-                                            disabled={!this.state.partnerInputChanged || Object.keys(this.state.partnerErrors).length > 0}
+                                            disabled={!this.state.partnerInputChanged || Object.keys(this.state.partnerErrors).length > 0 || this.state.partnerFirstName.length <= 0 || this.state.partnerLastName.length <= 0 || this.state.partnerEmail.length <= 0}
                                         >Save</Button>
                                         <a href="#" className="settings-link text-body font-medium settings-edit-footer-cancel" onClick={(ev) => this.partnerCancelClickHandler(ev)}>Cancel</a>
                                     </div>
@@ -1784,7 +1797,7 @@ class RegistryDetail extends React.Component {
                                             <p className="text-sm font-medium">Name</p>
                                         </div>
                                         <div className="col">
-                                            <p className="text-sm">{this.state.userInfo && this.state.userInfo.partner ? `${this.state.userInfo.partner.firstName} ${this.state.userInfo.partner.lastName}` : ""}</p>
+                                            <p className="text-sm">{this.state.userInfo && this.state.userInfo.partner ? `${this.state.userInfo.partner.firstName ? this.state.userInfo.partner.firstName : ""} ${this.state.userInfo.partner.lastName ? this.state.userInfo.partner.lastName : ""}` : ""}</p>
                                         </div>
                                     </div>
                                     <div className="row mt-2">
@@ -1895,9 +1908,9 @@ class BankDetail extends React.Component {
 
     // Account Error mapping backend
     backendErrors = {
-        bank_account_type : "accountType",
-        routing_number : "routingNumber",
-        account_number : "accountNumber"
+        bank_account_type: "accountType",
+        routing_number: "routingNumber",
+        account_number: "accountNumber"
     }
 
     mandatoryFields = [
@@ -2054,31 +2067,31 @@ class BankDetail extends React.Component {
     formatPhoneNumber = (phoneNumber) => {
         // Formatting phone number in +1 202-302-1123 or 203-223-1234
         let finalPhone = ""
-        if (phoneNumber.match(this.PHONE_WITH_COUNTRY_CODE)){
-            for (let ch in phoneNumber){
+        if (phoneNumber.match(this.PHONE_WITH_COUNTRY_CODE)) {
+            for (let ch in phoneNumber) {
                 if (Number(ch) === 2) {
                     finalPhone += " "
                 }
-                if (Number(ch) === 5){
+                if (Number(ch) === 5) {
                     finalPhone += "-"
                 }
-                if (Number(ch) === 8){
+                if (Number(ch) === 8) {
                     finalPhone += "-"
                 }
                 finalPhone += phoneNumber[ch]
             }
-        } else if (phoneNumber.match(this.PHONE_WITHOUT_COUNTRY_CODE)){
-            for (let ch in phoneNumber){
-                if (Number(ch) === 3){
+        } else if (phoneNumber.match(this.PHONE_WITHOUT_COUNTRY_CODE)) {
+            for (let ch in phoneNumber) {
+                if (Number(ch) === 3) {
                     finalPhone += "-"
                 }
-                if (Number(ch) === 6){
+                if (Number(ch) === 6) {
                     finalPhone += "-"
                 }
                 finalPhone += phoneNumber[ch]
             }
         }
-        
+
         return finalPhone
     }
 
@@ -2428,7 +2441,7 @@ class BankDetail extends React.Component {
             reqData.variables['bankAccountId'] = this.state.bankAccount[0].id
         }
 
-        if (!this.bankAccountApiCalled){
+        if (!this.bankAccountApiCalled) {
             this.bankAccountApiCalled = true
             apiGraphql(reqData).then(res => res.json())
                 .then(res => {
@@ -2440,16 +2453,17 @@ class BankDetail extends React.Component {
                             editBankAccount: false
                         })
                         toast("Bank Account detail changed successfully.")
+                        scrollToTop();
                     }
-    
+
                     if (res.errors) {
                         scrollToTop();
                         this.bankAccountApiCalled = false
                         for (let error of res.errors) {
-                            if (error.errors && Object.keys(error.errors).length > 0){
+                            if (error.errors && Object.keys(error.errors).length > 0) {
                                 for (let fieldError of Object.keys(error.errors)) {
-                                    if (Object.keys(this.backendErrors).indexOf(fieldError) !== -1){
-                                        let errorState = {...this.state.bankAccountErrors}
+                                    if (Object.keys(this.backendErrors).indexOf(fieldError) !== -1) {
+                                        let errorState = { ...this.state.bankAccountErrors }
                                         if (error.errors[fieldError].length > 0) {
                                             errorState[this.backendErrors[fieldError]] = error.errors[fieldError][0]
                                         } else {
@@ -2490,15 +2504,15 @@ class BankDetail extends React.Component {
         // Maximum date for DOB
         let today = new Date();
         let dd = today.getDate();
-        let mm = today.getMonth()+1; //January is 0!
+        let mm = today.getMonth() + 1; //January is 0!
         let yyyy = today.getFullYear();
-        if(dd<10){
-                dd='0'+dd
-            } 
-            if(mm<10){
-                mm='0'+mm
-            } 
-        today = yyyy+'-'+mm+'-'+dd;
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+        today = yyyy + '-' + mm + '-' + dd;
 
         if (this.state.editBankAccount && this.state.country && this.state.country.countryShortCode) {
             let country = window.countryRegionList.find(el => el.countryShortCode === this.state.country.countryShortCode)
@@ -2592,10 +2606,10 @@ class BankDetail extends React.Component {
                                                 <div className="custom-select-container" id="bankAccountTypeSelectContainer">
                                                     <ul className="custom-select-lists w-100 p-0">
                                                         {this.bankAccountType.map(accountType => {
-                                                            if (this.state.accountType.label && this.state.accountType.label === accountType.label){
+                                                            if (this.state.accountType.label && this.state.accountType.label === accountType.label) {
                                                                 return null
                                                             }
-                                                            return ( <li onClick={() => this.accountTypeChangeHandler(accountType, "bankAccountTypeSelectContainer")}>{accountType.label}</li>)
+                                                            return (<li onClick={() => this.accountTypeChangeHandler(accountType, "bankAccountTypeSelectContainer")}>{accountType.label}</li>)
                                                         })}
                                                     </ul>
                                                 </div>
@@ -2781,7 +2795,7 @@ class BankDetail extends React.Component {
                                                 <div className="custom-select-container" id="stateSelectContainer">
                                                     <ul className="custom-select-lists w-100 p-0">
                                                         {states.map(state => {
-                                                            if (this.state.stateProvince.name && this.state.stateProvince.name === state.name){
+                                                            if (this.state.stateProvince.name && this.state.stateProvince.name === state.name) {
                                                                 return null
                                                             }
                                                             return (<li onClick={() => this.stateProvinceChangeHandler(state, "stateSelectContainer")}>{state.name}</li>)
@@ -2829,7 +2843,7 @@ class BankDetail extends React.Component {
                                                 <label className="settings-input-error-message text-sm m-0">{this.state.bankAccountErrors.phone}</label>
                                                 : null}
                                         </div>
-                                    </div>                                    
+                                    </div>
                                 </div>
 
                                 <div className="row">
@@ -3060,7 +3074,7 @@ class MyDetail extends React.Component {
             }
         }
 
-        if (!this.myDetailApiCalled){
+        if (!this.myDetailApiCalled) {
             this.myDetailApiCalled = true
             apiGraphql(reqData).then(res => res.json())
                 .then(res => {
@@ -3183,7 +3197,7 @@ class MyDetail extends React.Component {
                                     <Button
                                         className="settings-edit-footer-button text-body font-medium"
                                         onClick={this.saveAccountDetailClickHandler}
-                                        disabled={!this.state.accountInputChanged || Object.keys(this.state.accountErrors).length > 0}
+                                        disabled={!this.state.accountInputChanged || Object.keys(this.state.accountErrors).length > 0 || this.state.accountFirstName.length <= 0 || this.state.accountLastName.length <= 0}
                                     >Save</Button>
                                     <a href="#" className="settings-link text-body font-medium settings-edit-footer-cancel" onClick={(ev) => this.cancelClickHandler(ev)}>Cancel</a>
                                 </div>
@@ -3266,7 +3280,9 @@ class ShippingAddress extends React.Component {
         enableSaveButton: false,
 
         removeAddressModalShow: false,
-        addressToRemove: null
+        addressToRemove: null,
+
+        showConfirmRemoveModal: false
     }
 
     shippingAddressApiCalled = false
@@ -3349,7 +3365,7 @@ class ShippingAddress extends React.Component {
             this.state.country.countryName &&
             this.state.postalCode.length === this.PIN_CODE_LENGTH &&
             (this.cleanPhoneNumber(this.state.phone).match(this.PHONE_WITH_COUNTRY_CODE_COMPLETE) || this.cleanPhoneNumber(this.state.phone).match(this.PHONE_WITHOUT_COUNTRY_CODE_COMPLETE) &&
-            this.state.shippingDetailChanged)
+                this.state.shippingDetailChanged)
         ) {
             enableSave = true
         }
@@ -3377,31 +3393,31 @@ class ShippingAddress extends React.Component {
     formatPhoneNumber = (phoneNumber) => {
         // Formatting phone number in +1 202-302-1123 or 203-223-1234
         let finalPhone = ""
-        if (phoneNumber.match(this.PHONE_WITH_COUNTRY_CODE)){
-            for (let ch in phoneNumber){
+        if (phoneNumber.match(this.PHONE_WITH_COUNTRY_CODE)) {
+            for (let ch in phoneNumber) {
                 if (Number(ch) === 2) {
                     finalPhone += " "
                 }
-                if (Number(ch) === 5){
+                if (Number(ch) === 5) {
                     finalPhone += "-"
                 }
-                if (Number(ch) === 8){
+                if (Number(ch) === 8) {
                     finalPhone += "-"
                 }
                 finalPhone += phoneNumber[ch]
             }
-        } else if (phoneNumber.match(this.PHONE_WITHOUT_COUNTRY_CODE)){
-            for (let ch in phoneNumber){
-                if (Number(ch) === 3){
+        } else if (phoneNumber.match(this.PHONE_WITHOUT_COUNTRY_CODE)) {
+            for (let ch in phoneNumber) {
+                if (Number(ch) === 3) {
                     finalPhone += "-"
                 }
-                if (Number(ch) === 6){
+                if (Number(ch) === 6) {
                     finalPhone += "-"
                 }
                 finalPhone += phoneNumber[ch]
             }
         }
-        
+
         return finalPhone
     }
 
@@ -3667,7 +3683,7 @@ class ShippingAddress extends React.Component {
             addAddress = true
         }
 
-        if (!this.shippingAddressApiCalled){
+        if (!this.shippingAddressApiCalled) {
             this.shippingAddressApiCalled = true
             apiGraphql(reqData).then(res => res.json())
                 .then(res => {
@@ -3704,7 +3720,9 @@ class ShippingAddress extends React.Component {
         })
     }
 
-    removeBankAccountClickHandler = () => {
+    removeAddressClickHandler = () => {
+        let backendError = false
+        let addressLengthBeforeDelete = this.state.addresses.length;
         if (this.state.addressToRemove) {
             let reqData = {
                 query: window.REMOVE_ADDRESS,
@@ -3729,6 +3747,7 @@ class ShippingAddress extends React.Component {
                             this.closeRemoveAddressModal()
                         })
                     } else if (res.errors) {
+                        backendError = true
                         for (let error of res.errors) {
                             toast(error.message, "error")
                         }
@@ -3737,8 +3756,32 @@ class ShippingAddress extends React.Component {
                     }
                 })
         } else {
+            backendError = true
             this.closeRemoveAddressModal()
             toast("No address to remove.", "error")
+        }
+
+        if (this.state.registry && this.state.registry.isPublic && !backendError && addressLengthBeforeDelete === 1) {
+            let reqData = {
+                query: UPDATE_REGISTRY_DETAIL,
+                variables: {
+                    registryId: this.state.registry.id,
+                    registryData: {
+                        isPublic: false
+                    }
+                }
+            }
+
+            apiGraphql(reqData).then(res => res.json())
+                .then(res => {
+                    if (res.data && res.data.updateRegistry) {
+                        registryVisibilityChanged = true
+                    }
+                    if (res.errors) {
+                        console.error({ ...res.errors })
+                        registryVisibilityChanged = false
+                    }
+                })
         }
     }
 
@@ -3940,7 +3983,7 @@ class ShippingAddress extends React.Component {
                                             <div className="custom-select-container" id="stateSelectContainer">
                                                 <ul className="custom-select-lists w-100 p-0">
                                                     {states.map(state => {
-                                                        if (this.state.stateProvince.name && this.state.stateProvince.name === state.name){
+                                                        if (this.state.stateProvince.name && this.state.stateProvince.name === state.name) {
                                                             return null
                                                         }
                                                         return (<li onClick={() => this.stateProvinceChangeHandler(state, "stateSelectContainer")}>{state.name}</li>)
@@ -4078,7 +4121,7 @@ class ShippingAddress extends React.Component {
 
                                 <Button
                                     variant="primary"
-                                    onClick={this.removeBankAccountClickHandler}
+                                    onClick={this.removeAddressClickHandler}
                                     className="bank-detail-remove-button text-body font-medium"
                                 >Yes, Please Remove</Button>
                             </div>
@@ -4094,6 +4137,38 @@ class ShippingAddress extends React.Component {
                         }
                     </ModalComponent>
                     : null}
+                    {/* <ModalComponent
+                            show={this.state.showConfirmRemoveModal}
+                            size="md"
+                            closeModal={() => this.setState({ showConfirmRemoveModal: false })}
+                            footer={
+                                <div>
+                                    <Button
+                                        variant="secondary"
+                                        onClick={() => this.setState({ showConfirmRemoveModal: false })}
+                                        className="bank-detail-remove-button text-body font-medium mr-2"
+                                    >Do Not Remove</Button>
+
+                                    <Button
+                                        variant="primary"
+                                        onClick={this.removeBankAccountClickHandler}
+                                        className="bank-detail-remove-button text-body font-medium"
+                                    >Yes, Please Remove</Button>
+                                </div>
+                            }
+                        >
+
+                            {this.state.registry ?
+                                this.state.registry.isPublic ?
+                                    <div>
+                                        <h2>Removing your bank details will set your registry to private.</h2>
+                                        <p className="text-sm remove-modal-subtext mt-2 mb-3">Your guests won’t be able to see your registry. Are you sure you want to remove your bank details?</p>
+                                    </div>
+                                    :
+                                    <h2>Are you sure you want remove Bank Account?</h2>
+                                : null}
+
+                        </ModalComponent> */}
             </div>
         )
     }
