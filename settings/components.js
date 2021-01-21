@@ -1468,7 +1468,7 @@ class RegistryDetail extends React.Component {
                                         <Button
                                             className="settings-edit-footer-button text-body font-medium"
                                             onClick={this.saveRegistryDetailClickHandler}
-                                            disabled={!this.state.enableRegistryDetailSaveBtn || Object.keys(this.state.registryErrors).length > 0}
+                                            disabled={!this.state.enableRegistryDetailSaveBtn || Object.keys(this.state.registryErrors).length > 0 || this.state.registryName.length <= 0 || this.state.registryLink.length <= 0}
                                         >Save</Button>
                                         <a href="#" className="settings-link text-body font-medium settings-edit-footer-cancel" onClick={(ev) => this.cancelClickHandler(ev)}>Cancel</a>
                                     </div>
