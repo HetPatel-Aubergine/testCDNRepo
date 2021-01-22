@@ -694,6 +694,8 @@ class RegistryDetail extends React.Component {
     partnerDetailApiCalled = false
     resendEmailApiCalled = false
 
+    DELAY_TO_ACTIVATE_RESEND_LINK = 6000
+
     CHILDREN_COUNT_LIST = [
         { key: 'One', value: 'One' },
         { key: 'Two', value: 'Two' },
@@ -724,13 +726,18 @@ class RegistryDetail extends React.Component {
     // REGISTRY DETAIL
     copyRegistryUrl = (ev) => {
         ev.preventDefault();
-        const el = document.createElement('textarea');
-        el.value = `${REGISTRY_PAGE}${this.state.registryLink}`;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-        toast("Copied to clipboard");
+        if (ev.target.getAttribute('data-disabled') === "false") {
+            this.handleSendInvitationLinkVisibility(ev, true);
+            const el = document.createElement('textarea');
+            el.value = `${REGISTRY_PAGE}${this.state.registryLink}`;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            toast("Copied to clipboard");
+
+            setTimeout(() => this.handleSendInvitationLinkVisibility(ev, false), this.DELAY_TO_ACTIVATE_RESEND_LINK);
+        }
     }
 
     validRegistryData = () => {
@@ -950,11 +957,6 @@ class RegistryDetail extends React.Component {
             valid = false
         }
 
-        if (this.state.gender.length <= 0) {
-            errors['gender'] = "This field is required"
-            valid = false
-        }
-
         this.setState({
             childErrors: errors
         })
@@ -1029,12 +1031,11 @@ class RegistryDetail extends React.Component {
             delete errors.childrenCount
         }
 
-        this.setState((prevState, _) => ({
+        this.setState({
             childrenCount: value,
             editChildrenInfoChanged: true,
-            childErrors: errors,
-            gender: value.key === "One" && prevState.gender === "Both" ? "" : prevState.gender
-        }))
+            childErrors: errors
+        })
 
         let parentContainer = document.getElementById(parentContainerId)
         if (parentContainer) {
@@ -1155,6 +1156,9 @@ class RegistryDetail extends React.Component {
             valid = false
         } else if (!this.state.partnerEmail.match(this.EMAIL_RE)) {
             errors['partnerEmail'] = "Invalid Email address"
+            valid = false;
+        } else if (this.state.registry && this.state.registry.user && String(this.state.registry.user.email).toLowerCase().trim() === String(this.state.partnerEmail).toLowerCase().trim()) {
+            errors['partnerEmail'] = "Cannot use same email for partner."
             valid = false;
         }
 
@@ -1297,18 +1301,33 @@ class RegistryDetail extends React.Component {
         }
     }
 
+    handleSendInvitationLinkVisibility = (ev, block) => {
+        if (ev && ev.target) {
+            if (block) {
+                ev.target.classList.add('disabled-ma-link');
+                ev.target.setAttribute('data-disabled', "true")
+            } else {
+                ev.target.classList.remove('disabled-ma-link');
+                ev.target.setAttribute('data-disabled', "false")
+            }
+        }
+    }
+
     partnerResendEmailClickHandler = (ev) => {
         ev.preventDefault()
         let reqData = {
             query: window.RESEND_INVITATION_EMAIL
         }
-        if (!this.resendEmailApiCalled) {
+
+        if (!this.resendEmailApiCalled && ev.target.getAttribute('data-disabled') === "false") {
+            this.handleSendInvitationLinkVisibility(ev, true)
             this.resendEmailApiCalled = true;
             apiGraphql(reqData).then(res => res.json())
                 .then(res => {
                     if (res.data) {
                         if (res.data.resendPartnerInvite) {
                             toast("Invitation mail sent successfully")
+                            setTimeout(() => this.handleSendInvitationLinkVisibility(ev, false), this.DELAY_TO_ACTIVATE_RESEND_LINK)
                         }
                     } else if (res.errors) {
                         for (let error of res.errors) {
@@ -1428,7 +1447,7 @@ class RegistryDetail extends React.Component {
                                         </div>
                                     </div>
                                     <div className="col">
-                                        <a className="d-block settings-link text-body font-medium registry-detail-url-copy-link" href="#" onClick={(ev) => this.copyRegistryUrl(ev)}>Copy</a>
+                                        <a className="d-block settings-link text-body font-medium registry-detail-url-copy-link" data-disabled="false" href="#" onClick={(ev) => this.copyRegistryUrl(ev)}>Copy</a>
                                     </div>
                                 </div>
 
@@ -1468,7 +1487,7 @@ class RegistryDetail extends React.Component {
                                         <Button
                                             className="settings-edit-footer-button text-body font-medium"
                                             onClick={this.saveRegistryDetailClickHandler}
-                                            disabled={!this.state.enableRegistryDetailSaveBtn || Object.keys(this.state.registryErrors).length > 0 || this.state.registryName.length <= 0 || this.state.registryLink.length <= 0}
+                                            disabled={!this.state.enableRegistryDetailSaveBtn || Object.keys(this.state.registryErrors).length > 0}
                                         >Save</Button>
                                         <a href="#" className="settings-link text-body font-medium settings-edit-footer-cancel" onClick={(ev) => this.cancelClickHandler(ev)}>Cancel</a>
                                     </div>
@@ -1643,17 +1662,17 @@ class RegistryDetail extends React.Component {
                                                         <p className="text-body">Girl</p>
                                                     </div>
                                                 </RadioButton>
-                                                {this.state.childrenCount && this.state.childrenCount.key !== "One" ?
-                                                    <RadioButton
-                                                        className="settings-radio-input"
-                                                        checked={this.state.gender && this.state.gender === "Both"}
-                                                        changeHandler={() => this.childGenderChangeHandler("Both")}
-                                                    >
-                                                        <div>
-                                                            <p className="text-body">Both</p>
-                                                        </div>
-                                                    </RadioButton>                                                    
-                                                    : null}
+
+                                                <RadioButton
+                                                    className="settings-radio-input"
+                                                    checked={false}
+                                                    checked={this.state.gender && this.state.gender === "Both"}
+                                                    changeHandler={() => this.childGenderChangeHandler("Both")}
+                                                >
+                                                    <div>
+                                                        <p className="text-body">Both</p>
+                                                    </div>
+                                                </RadioButton>
 
                                                 <RadioButton
                                                     className="settings-radio-input"
@@ -1664,9 +1683,6 @@ class RegistryDetail extends React.Component {
                                                         <p className="text-body">It’s a surprise!</p>
                                                     </div>
                                                 </RadioButton>
-                                                {this.state.childErrors.gender ?
-                                                        <label className="settings-input-error-message text-sm m-0">{this.state.childErrors.gender}</label>
-                                                        : null}
                                             </div>
                                         </div>
                                     </div>
@@ -1783,7 +1799,7 @@ class RegistryDetail extends React.Component {
                                         <Button
                                             className="settings-edit-footer-button text-body font-medium"
                                             onClick={this.savePartnerDetailClickHandler}
-                                            disabled={!this.state.partnerInputChanged || Object.keys(this.state.partnerErrors).length > 0 || this.state.partnerFirstName.length <= 0 || this.state.partnerLastName.length <= 0 || this.state.partnerEmail.length <= 0}
+                                            disabled={!this.state.partnerInputChanged || Object.keys(this.state.partnerErrors).length > 0}
                                         >Save</Button>
                                         <a href="#" className="settings-link text-body font-medium settings-edit-footer-cancel" onClick={(ev) => this.partnerCancelClickHandler(ev)}>Cancel</a>
                                     </div>
@@ -1812,7 +1828,7 @@ class RegistryDetail extends React.Component {
                                         <div className="row mt-2">
                                             <div className="col">
                                                 <span className="partner-invitation-pending-pill text-sm font-medium d-inline-block mr-3">Invitation Pending</span>
-                                                <a href="#" className="settings-link text-sm font-medium" onClick={(ev) => this.partnerResendEmailClickHandler(ev)}>Resend Email</a>
+                                                <a href="#" className="settings-link text-sm font-medium" data-disabled="false" onClick={(ev) => this.partnerResendEmailClickHandler(ev)}>Resend Email</a>
                                             </div>
                                         </div>
                                         : null}
@@ -2931,14 +2947,19 @@ class BankDetail extends React.Component {
                         >
 
                             {this.state.registry ?
-                                this.state.registry.isPublic ?
+                                this.state.registry.isCashInLieuItemAdded || this.state.registry.isCashFundItemAdded ?
                                     <div>
-                                        <h2>Removing your bank details will set your registry to private.</h2>
-                                        <p className="text-sm remove-modal-subtext mt-2 mb-3">Your guests won’t be able to see your registry. Are you sure you want to remove your bank details?</p>
+                                        <h3 className="font-medium text-body">If you delete your bank account details, we will make your registry private.  This is because your registry contains products where we are collecting cash on your behalf and we will no longer have the necessary information to get this cash to you.</h3>
+                                        <p>Are you sure you want to proceed?</p>
                                     </div>
                                     :
-                                    <h2>Are you sure you want remove Bank Account?</h2>
-                                : null}
+                                    <div>
+                                        <h3 className="font-medium text-body">Without bank account information, you won't be able to add cash funds or group gifts to your registry.</h3>
+                                        <p>Are you sure you want to proceed?</p>
+                                    </div>
+                                :
+                                <h2>Are you sure you want remove Bank Account?</h2>
+                            }
 
                         </ModalComponent>
                     </div>
@@ -3197,7 +3218,7 @@ class MyDetail extends React.Component {
                                     <Button
                                         className="settings-edit-footer-button text-body font-medium"
                                         onClick={this.saveAccountDetailClickHandler}
-                                        disabled={!this.state.accountInputChanged || Object.keys(this.state.accountErrors).length > 0 || this.state.accountFirstName.length <= 0 || this.state.accountLastName.length <= 0}
+                                        disabled={!this.state.accountInputChanged || Object.keys(this.state.accountErrors).length > 0}
                                     >Save</Button>
                                     <a href="#" className="settings-link text-body font-medium settings-edit-footer-cancel" onClick={(ev) => this.cancelClickHandler(ev)}>Cancel</a>
                                 </div>
@@ -3280,12 +3301,11 @@ class ShippingAddress extends React.Component {
         enableSaveButton: false,
 
         removeAddressModalShow: false,
-        addressToRemove: null,
-
-        showConfirmRemoveModal: false
+        addressToRemove: null
     }
 
     shippingAddressApiCalled = false
+    deleteAddressApiCalled = false
 
     getAddresses = async () => {
 
@@ -3625,7 +3645,7 @@ class ShippingAddress extends React.Component {
         if (ev) {
             ev.preventDefault()
         }
-
+        scrollToTop()
         this.setState({
             editShippingAddress: false,
             editAddressId: null,
@@ -3687,6 +3707,7 @@ class ShippingAddress extends React.Component {
             this.shippingAddressApiCalled = true
             apiGraphql(reqData).then(res => res.json())
                 .then(res => {
+                    scrollToTop()
                     if (res.data && res.data[mutationCalled].address) {
                         let addressFetched = this.getAddresses()
                         addressFetched.then(res => {
@@ -3702,7 +3723,6 @@ class ShippingAddress extends React.Component {
                             }
                         })
                     } else if (res.errors) {
-                        scrollToTop()
                         this.shippingAddressApiCalled = false
                         for (let error of res.errors) {
                             toast(error.message, "error")
@@ -3720,9 +3740,7 @@ class ShippingAddress extends React.Component {
         })
     }
 
-    removeAddressClickHandler = () => {
-        let backendError = false
-        let addressLengthBeforeDelete = this.state.addresses.length;
+    removeBankAccountClickHandler = () => {
         if (this.state.addressToRemove) {
             let reqData = {
                 query: window.REMOVE_ADDRESS,
@@ -3730,58 +3748,35 @@ class ShippingAddress extends React.Component {
                     addressId: this.state.addressToRemove.id
                 }
             }
-
-            apiGraphql(reqData).then(res => res.json())
-                .then(res => {
-                    if (res.data && res.data.deleteAddress) {
-                        let addressFetched = this.getAddresses()
-                        addressFetched.then(res => {
-                            if (res) {
-                                toast("Address deleted successfully.", "error")
-                                this.setState({
-                                    addressToRemove: null
-                                })
-                            } else {
-                                toast("Address deleted. Error occurred while fetching address.", "error")
-                            }
-                            this.closeRemoveAddressModal()
-                        })
-                    } else if (res.errors) {
-                        backendError = true
-                        for (let error of res.errors) {
-                            toast(error.message, "error")
-                        }
-                        console.error({ ...res.errors })
+            if (!this.deleteAddressApiCalled) {
+                this.deleteAddressApiCalled = true
+                apiGraphql(reqData).then(res => res.json())
+                    .then(res => {
                         this.closeRemoveAddressModal()
-                    }
-                })
+                        if (res.data && res.data.deleteAddress) {
+                            let addressFetched = this.getAddresses()
+                            addressFetched.then(res => {
+                                if (res) {
+                                    toast("Address deleted successfully.", "error")
+                                    this.setState({
+                                        addressToRemove: null
+                                    })
+                                } else {
+                                    toast("Address deleted. Error occurred while fetching address.", "error")
+                                }
+                            })
+                        } else if (res.errors) {
+                            for (let error of res.errors) {
+                                toast(error.message, "error")
+                            }
+                            console.error({ ...res.errors })
+                        }
+                        this.deleteAddressApiCalled = false
+                    })
+            }
         } else {
-            backendError = true
             this.closeRemoveAddressModal()
             toast("No address to remove.", "error")
-        }
-
-        if (this.state.registry && this.state.registry.isPublic && !backendError && addressLengthBeforeDelete === 1) {
-            let reqData = {
-                query: UPDATE_REGISTRY_DETAIL,
-                variables: {
-                    registryId: this.state.registry.id,
-                    registryData: {
-                        isPublic: false
-                    }
-                }
-            }
-
-            apiGraphql(reqData).then(res => res.json())
-                .then(res => {
-                    if (res.data && res.data.updateRegistry) {
-                        registryVisibilityChanged = true
-                    }
-                    if (res.errors) {
-                        console.error({ ...res.errors })
-                        registryVisibilityChanged = false
-                    }
-                })
         }
     }
 
@@ -4121,7 +4116,7 @@ class ShippingAddress extends React.Component {
 
                                 <Button
                                     variant="primary"
-                                    onClick={this.removeAddressClickHandler}
+                                    onClick={!this.deleteAddressApiCalled ? this.removeBankAccountClickHandler : null}
                                     className="bank-detail-remove-button text-body font-medium"
                                 >Yes, Please Remove</Button>
                             </div>
@@ -4137,38 +4132,6 @@ class ShippingAddress extends React.Component {
                         }
                     </ModalComponent>
                     : null}
-                    {/* <ModalComponent
-                            show={this.state.showConfirmRemoveModal}
-                            size="md"
-                            closeModal={() => this.setState({ showConfirmRemoveModal: false })}
-                            footer={
-                                <div>
-                                    <Button
-                                        variant="secondary"
-                                        onClick={() => this.setState({ showConfirmRemoveModal: false })}
-                                        className="bank-detail-remove-button text-body font-medium mr-2"
-                                    >Do Not Remove</Button>
-
-                                    <Button
-                                        variant="primary"
-                                        onClick={this.removeBankAccountClickHandler}
-                                        className="bank-detail-remove-button text-body font-medium"
-                                    >Yes, Please Remove</Button>
-                                </div>
-                            }
-                        >
-
-                            {this.state.registry ?
-                                this.state.registry.isPublic ?
-                                    <div>
-                                        <h2>Removing your bank details will set your registry to private.</h2>
-                                        <p className="text-sm remove-modal-subtext mt-2 mb-3">Your guests won’t be able to see your registry. Are you sure you want to remove your bank details?</p>
-                                    </div>
-                                    :
-                                    <h2>Are you sure you want remove Bank Account?</h2>
-                                : null}
-
-                        </ModalComponent> */}
             </div>
         )
     }

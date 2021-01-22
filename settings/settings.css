@@ -25,8 +25,14 @@
 }
 
 .m-a-settings .settings-link {
+  cursor: pointer !important;
   color: #256e6f !important;
   text-decoration: underline;
+}
+
+.m-a-settings .disabled-ma-link {
+  color: #7e7f82 !important;
+  cursor: default !important;
 }
 
 .m-a-settings .radio {

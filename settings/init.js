@@ -29,6 +29,11 @@ query {
             numberOfChildren
             gender
           }
+          user{
+            email
+          }
+          isCashInLieuItemAdded
+          isCashFundItemAdded
         }
       }
     }
