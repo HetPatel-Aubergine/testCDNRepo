@@ -703,6 +703,16 @@ class RegistryDetail extends React.Component {
         { key: 'More!', value: 'More!' }
     ]
 
+    updateLocalRegistryInfo = () => {
+        let registryData = window.getRegistry()
+        registryData.then(data => {
+            this.setState({
+                registry: data,
+                registrySearched: true
+            })
+        })
+    }
+
     componentDidMount() {
 
         // Updating User information
@@ -714,13 +724,7 @@ class RegistryDetail extends React.Component {
         })
 
         // Updating registry information
-        let registryData = window.getRegistry()
-        registryData.then(data => {
-            this.setState({
-                registry: data,
-                registrySearched: true
-            })
-        })
+        this.updateLocalRegistryInfo()
     }
 
     // REGISTRY DETAIL
@@ -1252,6 +1256,7 @@ class RegistryDetail extends React.Component {
                                     })
                                     toast("Partner account updated successfully")
                                 }
+                                this.updateLocalRegistryInfo()
                             } else if (res.errors) {
                                 this.partnerDetailApiCalled = false
                                 for (let error of res.errors) {
@@ -1287,6 +1292,7 @@ class RegistryDetail extends React.Component {
                                     })
                                     toast("Partner account added successfully")
                                 }
+                                this.updateLocalRegistryInfo()
                             } else if (res.errors) {
                                 this.partnerDetailApiCalled = false
                                 for (let error of res.errors) {
@@ -1356,6 +1362,7 @@ class RegistryDetail extends React.Component {
                         })
                         toast("Partner account removed successfully", "error")
                     }
+                    this.updateLocalRegistryInfo()
                 } else if (res.errors) {
                     for (let error of res.errors) {
                         toast(error.message, "error")
@@ -1487,7 +1494,7 @@ class RegistryDetail extends React.Component {
                                         <Button
                                             className="settings-edit-footer-button text-body font-medium"
                                             onClick={this.saveRegistryDetailClickHandler}
-                                            disabled={!this.state.enableRegistryDetailSaveBtn || Object.keys(this.state.registryErrors).length > 0}
+                                            disabled={!this.state.enableRegistryDetailSaveBtn || Object.keys(this.state.registryErrors).length > 0 || this.state.registryName.length < 1}
                                         >Save</Button>
                                         <a href="#" className="settings-link text-body font-medium settings-edit-footer-cancel" onClick={(ev) => this.cancelClickHandler(ev)}>Cancel</a>
                                     </div>
@@ -2135,43 +2142,77 @@ class BankDetail extends React.Component {
             await apiGraphql(reqData).then(res => res.json())
                 .then(res => {
                     if (res.data && res.data.updateRegistry) {
-                        registryVisibilityChanged = true
+                        registryVisibilityChanged = false
                     }
                     if (res.errors) {
                         console.error({ ...res.errors })
-                        registryVisibilityChanged = false
+                        registryVisibilityChanged = true
                     }
                 })
         }
 
-        if (this.state.registry && this.state.registry.isPublic && !registryVisibilityChanged) {
+        if (this.state.registry && this.state.registry.isPublic && registryVisibilityChanged) {
             toast("Error occurred while making registry secret.", "error")
         } else {
-            let reqData = {
-                query: REMOVE_BANK_ACCOUNT,
-                variables: {
-                    bankAccountId: this.state.bankAccount[0].id
+            if (!this.bankAccountApiCalled) {
+                this.bankAccountApiCalled = true;
+                let reqData = {
+                    query: REMOVE_BANK_ACCOUNT,
+                    variables: {
+                        bankAccountId: this.state.bankAccount[0].id
+                    }
                 }
-            }
 
-            await apiGraphql(reqData).then(res => res.json())
-                .then(res => {
-                    if (res.data && res.data.removeBankAccount) {
-                        this.setState({
-                            bankAccount: []
-                        })
-                        toast("Bank Account removed successfully.")
-                    }
-                    if (res.errors) {
-                        if (res.errors) {
-                            for (let error of res.errors) {
-                                toast(error.message, "error")
-                            }
-                            console.error({ ...res.errors })
+                await apiGraphql(reqData).then(res => res.json())
+                    .then(res => {
+                        if (res.data && res.data.removeBankAccount) {
+                            this.setState({
+                                bankAccount: []
+                            })
+                            toast("Bank Account removed successfully.")
                         }
-                    }
-                })
+                        if (res.errors) {
+                            if (res.errors) {
+                                for (let error of res.errors) {
+                                    toast(error.message, "error")
+                                }
+                                console.error({ ...res.errors })
+                            }
+                        }
+                        this.bankAccountApiCalled = false;
+                    })
+            }
         }
+
+
+        // if (this.state.registry && this.state.registry.isPublic && !registryVisibilityChanged) {
+        //     toast("Error occurred while making registry secret.", "error")
+        // } else {
+        //     let reqData = {
+        //         query: REMOVE_BANK_ACCOUNT,
+        //         variables: {
+        //             bankAccountId: this.state.bankAccount[0].id
+        //         }
+        //     }
+
+        //     await apiGraphql(reqData).then(res => res.json())
+        //         .then(res => {
+        //             if (res.data && res.data.removeBankAccount) {
+        //                 this.setState({
+        //                     bankAccount: []
+        //                 })
+        //                 toast("Bank Account removed successfully.")
+        //             }
+        //             if (res.errors) {
+        //                 if (res.errors) {
+        //                     for (let error of res.errors) {
+        //                         toast(error.message, "error")
+        //                     }
+        //                     console.error({ ...res.errors })
+        //                 }
+        //             }
+        //         })
+        // }
 
         this.setState({
             showConfirmRemoveModal: false
@@ -2461,6 +2502,7 @@ class BankDetail extends React.Component {
             this.bankAccountApiCalled = true
             apiGraphql(reqData).then(res => res.json())
                 .then(res => {
+                    this.bankAccountApiCalled = false
                     if (res.data && res.data[mutationCalled]) {
                         let clearData = this.getClearState()
                         this.setState({
@@ -2473,8 +2515,7 @@ class BankDetail extends React.Component {
                     }
 
                     if (res.errors) {
-                        scrollToTop();
-                        this.bankAccountApiCalled = false
+                        scrollToTop();                        
                         for (let error of res.errors) {
                             if (error.errors && Object.keys(error.errors).length > 0) {
                                 for (let fieldError of Object.keys(error.errors)) {
@@ -3218,7 +3259,7 @@ class MyDetail extends React.Component {
                                     <Button
                                         className="settings-edit-footer-button text-body font-medium"
                                         onClick={this.saveAccountDetailClickHandler}
-                                        disabled={!this.state.accountInputChanged || Object.keys(this.state.accountErrors).length > 0}
+                                        disabled={!this.state.accountInputChanged || Object.keys(this.state.accountErrors).length > 0 || this.state.accountLastName.length <= 0 || this.state.accountFirstName.length <= 0}
                                     >Save</Button>
                                     <a href="#" className="settings-link text-body font-medium settings-edit-footer-cancel" onClick={(ev) => this.cancelClickHandler(ev)}>Cancel</a>
                                 </div>
@@ -3376,6 +3417,23 @@ class ShippingAddress extends React.Component {
 
     checkForSaveBtnState = () => {
         let enableSave = false;
+        let sameAsEdit = false;
+
+        if (this.state.addressToEdit &&
+            this.state.firstName === this.state.addressToEdit.firstName &&
+            this.state.lastName === this.state.addressToEdit.lastName &&
+            this.state.addressLine1 === this.state.addressToEdit.address1 &&
+            this.state.company === this.state.addressToEdit.company &&
+            this.state.addressLine2 === this.state.addressToEdit.address2 &&
+            this.state.stateProvince.name === this.state.addressToEdit.province.name &&
+            Number(this.state.postalCode) === Number(this.state.addressToEdit.zip) &&
+            this.state.city === this.state.addressToEdit.city &&
+            this.cleanPhoneNumber(this.state.phone) === this.cleanPhoneNumber(this.state.addressToEdit.phone) &&
+            this.state.isDefaultAddress === this.state.addressToEdit.isDefault
+        ) {
+            sameAsEdit = true;
+        }
+
         if (
             this.state.firstName.length > 0 &&
             this.state.lastName.length > 0 &&
@@ -3385,7 +3443,8 @@ class ShippingAddress extends React.Component {
             this.state.country.countryName &&
             this.state.postalCode.length === this.PIN_CODE_LENGTH &&
             (this.cleanPhoneNumber(this.state.phone).match(this.PHONE_WITH_COUNTRY_CODE_COMPLETE) || this.cleanPhoneNumber(this.state.phone).match(this.PHONE_WITHOUT_COUNTRY_CODE_COMPLETE) &&
-                this.state.shippingDetailChanged)
+                this.state.shippingDetailChanged) &&
+            !sameAsEdit
         ) {
             enableSave = true
         }
@@ -3482,12 +3541,14 @@ class ShippingAddress extends React.Component {
             defaultValues['stateProvince'] = province ? province : {};
             defaultValues['postalCode'] = address.zip ? address.zip : {};
             defaultValues['phone'] = address.phone ? this.formatPhoneNumber(address.phone) : {};
+            defaultValues['isDefault'] = address.isDefault;
             isDefaultAddress = address.isDefault;
         }
 
         await this.setState({
             ...defaultValues,
             editShippingAddress: true,
+            addressToEdit: address,
             isDefaultAddress: isDefaultAddress !== null ? isDefaultAddress : this.state.addresses.length < 1,
             updateDefaultAddress: isDefaultAddress !== null ? !isDefaultAddress : this.state.addresses.length >= 1,
             enableSaveButton: isDefaultAddress ? true : false
@@ -3527,11 +3588,12 @@ class ShippingAddress extends React.Component {
         }
     }
 
-    companyChangeHandler = ev => {
-        this.setState({
+    companyChangeHandler = async ev => {
+        await this.setState({
             company: ev.target.value,
             shippingDetailChanged: true
         })
+        this.checkForSaveBtnState()
     }
 
     addressLine1ChangeHandler = async (ev) => {
@@ -3548,11 +3610,12 @@ class ShippingAddress extends React.Component {
         this.checkForSaveBtnState()
     }
 
-    addressLine2ChangeHandler = (ev) => {
-        this.setState({
+    addressLine2ChangeHandler = async (ev) => {
+        await this.setState({
             addressLine2: ev.target.value,
             shippingDetailChanged: true
         })
+        this.checkForSaveBtnState()
     }
 
     cityChangeHandler = async (ev) => {
