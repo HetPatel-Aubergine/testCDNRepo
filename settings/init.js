@@ -1,8 +1,8 @@
 // Constant global variables
 var CONSTANTS = {
     ACCESS_COOKIE_NAME: "access_token",
-    BACKEND_ENDPOINT: "https://3.12.191.197",
-    API_ENDPOINT_GRAPHQL: "https://3.12.191.197/api/graphql"
+    BACKEND_ENDPOINT: "https://registry-api.lilhathee.com",
+    API_ENDPOINT_GRAPHQL: "https://registry-api.lilhathee.com/api/graphql"
 }
 
 // Queries
