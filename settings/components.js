@@ -1629,7 +1629,7 @@ class RegistryDetail extends React.Component {
                                         <div className="settings-input-container">
                                             <label className="settings-input-label text-sm font-medium settings-input-required m-0">No. of Children</label>
                                             <div className="custom-select-input">
-                                                <button className={["custom-select-trigger w-100 text-left", this.state.childErrors.childrenCount ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("childCountSelectContainer")}>{this.state.childrenCount.value ? this.state.childrenCount.value : "Select No. of Children"}</button>
+                                                <a tabIndex={1} className={["custom-select-trigger d-block text-left", this.state.childErrors.childrenCount ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("childCountSelectContainer")}>{this.state.childrenCount.value ? this.state.childrenCount.value : "Select No. of Children"}</a>
                                                 <div className="custom-select-container" id="childCountSelectContainer">
                                                     <ul className="custom-select-lists w-100 p-0">
                                                         {this.CHILDREN_COUNT_LIST.map(option => (
@@ -2659,7 +2659,7 @@ class BankDetail extends React.Component {
                                         <div className="settings-input-container">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Bank Account Type</label>
                                             <div className="custom-select-input">
-                                                <button className={["custom-select-trigger w-100 text-left text-body", this.state.bankAccountErrors.accountType ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("bankAccountTypeSelectContainer")}>{this.state.accountType.label ? this.state.accountType.label : "Select account type"}</button>
+                                                <a tabIndex={1} className={["custom-select-trigger d-block text-left text-body", this.state.bankAccountErrors.accountType ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("bankAccountTypeSelectContainer")}>{this.state.accountType.label ? this.state.accountType.label : "Select account type"}</a>
                                                 <div className="custom-select-container" id="bankAccountTypeSelectContainer">
                                                     <ul className="custom-select-lists w-100 p-0">
                                                         {this.bankAccountType.map(accountType => {
@@ -2848,7 +2848,7 @@ class BankDetail extends React.Component {
                                                 min={0}
                                             /> */}
                                             <div className="custom-select-input">
-                                                <button className={["custom-select-trigger w-100 text-left text-body", this.state.bankAccountErrors.stateProvince ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("stateSelectContainer")}>{this.state.stateProvince.name ? this.state.stateProvince.name : "Select State/Province"}</button>
+                                                <a tabIndex={2} className={["custom-select-trigger d-block text-left text-body", this.state.bankAccountErrors.stateProvince ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("stateSelectContainer")}>{this.state.stateProvince.name ? this.state.stateProvince.name : "Select State/Province"}</a>
                                                 <div className="custom-select-container" id="stateSelectContainer">
                                                     <ul className="custom-select-lists w-100 p-0">
                                                         {states.map(state => {
@@ -2990,13 +2990,16 @@ class BankDetail extends React.Component {
                             {this.state.registry ?
                                 this.state.registry.isCashInLieuItemAdded || this.state.registry.isCashFundItemAdded ?
                                     <div>
-                                        <h3 className="font-medium text-body">If you delete your bank account details, we will make your registry private.  This is because your registry contains products where we are collecting cash on your behalf and we will no longer have the necessary information to get this cash to you.</h3>
-                                        <p>Are you sure you want to proceed?</p>
+                                        <h2>Remove bank account details</h2>
+                                        <p className="text-sm mt-2">If you delete your bank account details, we will make your registry private. </p>
+                                        <p className="text-sm mt-2">This is because your registry contains products where we are collecting cash on your behalf and we will no longer have the necessary information to get this cash to you.</p>
+                                        <p className="text-sm mt-2">Are you sure you want to proceed?</p>
                                     </div>
                                     :
                                     <div>
-                                        <h3 className="font-medium text-body">Without bank account information, you won't be able to add cash funds or group gifts to your registry.</h3>
-                                        <p>Are you sure you want to proceed?</p>
+                                        <h2>Remove bank account details</h2>
+                                        <p className="text-sm mt-2">Without bank account information, you won't be able to add cash funds or group gifts to your registry.</p>
+                                        <p className="text-sm mt-2">Are you sure you want to proceed?</p>
                                     </div>
                                 :
                                 <h2>Are you sure you want remove Bank Account?</h2>
@@ -4037,7 +4040,7 @@ class ShippingAddress extends React.Component {
                                     <div className="settings-input-container input-container-margin">
                                         <label className="settings-input-label settings-input-required text-sm font-medium m-0">State / Province</label>
                                         <div className="custom-select-input">
-                                            <button className={["custom-select-trigger w-100 text-left text-body", this.state.addressErrors.stateProvince ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("stateSelectContainer")}>{this.state.stateProvince.name ? this.state.stateProvince.name : "Select State/Province"}</button>
+                                            <a tabIndex={1} className={["custom-select-trigger d-block text-left text-body", this.state.addressErrors.stateProvince ? 'settings-input-error' : ''].join(' ')} onClick={() => this.selectTriggerClickHandler("stateSelectContainer")}>{this.state.stateProvince.name ? this.state.stateProvince.name : "Select State/Province"}</a>
                                             <div className="custom-select-container" id="stateSelectContainer">
                                                 <ul className="custom-select-lists w-100 p-0">
                                                     {states.map(state => {

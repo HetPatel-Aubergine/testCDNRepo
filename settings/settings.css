@@ -169,6 +169,8 @@
 }
 
 .m-a-settings .custom-select-input .custom-select-trigger {
+  all: unset;
+  cursor: pointer;
   margin-top: 6px;
   padding: 8px 12px;
   padding-right: 23px;
