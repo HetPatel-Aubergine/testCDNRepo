@@ -561,4 +561,49 @@
   border: 0.2em solid #d2d3d5 !important;
   border-right-color: #000000 !important;
 }
+
+.settings-registry-ma-btn-detail .m-a-heading {
+  color: #000000 !important;
+}
+
+.settings-registry-ma-btn-detail .primary-btn {
+  background-color: #afe3e4;
+  text-decoration: none;
+  color: #656668 !important;
+  border-radius: 3px;
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+
+.settings-registry-ma-btn-detail .primary-btn:hover { 
+  background-color: #89d6d7;
+}
+
+.settings-registry-ma-btn-detail .add-bookmarklet-btn-icon {
+  height: 24px;
+  width: 35.9px;
+  display: block;
+  cursor: -webkit-grab;
+  cursor: grab;
+  background-image: url("https://registry-cdn.monicaandandy.com/assets/logo_elephant.svg");
+  background-size: 35.9px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.settings-registry-ma-btn-detail .bookmarklet-steps {
+  border-radius: 6px;
+  border: solid 1px #d2d3d5;
+  background-color: #ffffff;
+
+}
+
+.settings-registry-ma-btn-detail .bookmarklet-steps .steps-title .steps-details {
+  color: #4a4a4a;
+}
+
+.settings-registry-ma-btn-detail .bookmarklet-steps ol {
+  padding-right: 70px;
+  padding-left: 70px;
+}
 /*# sourceMappingURL=settings.css.map */

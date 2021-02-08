@@ -2,7 +2,9 @@
 var CONSTANTS = {
     ACCESS_COOKIE_NAME: "access_token",
     BACKEND_ENDPOINT: "https://registry-api.lilhathee.com",
-    API_ENDPOINT_GRAPHQL: "https://registry-api.lilhathee.com/api/graphql"
+    API_ENDPOINT_GRAPHQL: "https://registry-api.lilhathee.com/api/graphql",
+    BOOKMARKLET_SCRIPT: "javascript:(function()%7Blet%20script%20%3D%20document.createElement('script')%3Bscript.src%20%3D%20'https%3A%2F%2Fregistry-api.lilhathee.com%2Fbookmarklet.js'%3Bdocument.body.appendChild(script)%7D)()",
+    BOOKMARKLET_STEP_THREE_PRODUCT_LINK: "https://usa.plantoys.com/en/product/key-rattle",
 }
 
 // Queries
@@ -208,6 +210,12 @@ getRegistry().then(res => {
         <p class="settings-sidebar-heading text-sm">Registry</p>
         <a href="?content=registry-detail" id="registry-detail" class="settings-sidebar-link d-block text-body">Registry Details</a>
         <a href="?content=bank-detail" id="bank-detail" class="settings-sidebar-link d-block text-body">Bank Details</a>
+        `
+        // Loading M+A Button
+        let sidebarRegistryMAButtonElement = document.getElementById('settings-sidebar-ma-button');
+        sidebarRegistryMAButtonElement.innerHTML = `
+        <p class="settings-sidebar-heading text-sm">M+A Button</p>
+        <a href="?content=m-a-button" id="m-a-button" class="settings-sidebar-link d-block text-body">Get M+A Button</a>
         `
     }
 

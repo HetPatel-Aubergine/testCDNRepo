@@ -11,6 +11,9 @@ if (s.get('content') === "bank-detail") {
 } else if (s.get('content') === "shipping-address") {
     // Load Shipping Address component
     ReactDOM.render(e(ShippingAddress), domContainer);
+} else if (s.get('content') === "m-a-button") {
+    // Load Shipping Address component
+    ReactDOM.render(e(BookmarkletSection), domContainer);
 } else {
     // Default component is Registry Detail
     ReactDOM.render(e(MyDetail), domContainer);

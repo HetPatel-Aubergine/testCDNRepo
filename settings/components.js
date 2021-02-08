@@ -2515,7 +2515,7 @@ class BankDetail extends React.Component {
                     }
 
                     if (res.errors) {
-                        scrollToTop();                        
+                        scrollToTop();
                         for (let error of res.errors) {
                             if (error.errors && Object.keys(error.errors).length > 0) {
                                 for (let fieldError of Object.keys(error.errors)) {
@@ -4201,4 +4201,106 @@ class ShippingAddress extends React.Component {
             </div>
         )
     }
+}
+
+class BookmarkletSection extends React.Component {
+
+    M_A_BUTTON_CONTENT = {
+        "Chrome": "In your Chrome browser, go to the top right menu and select Settings. In the left navigation you will find Appearance. Inside it find ‘Show Bookmarks’ bar then toggle to turn on.",
+        "Firefox": "In your Firefox browser, go to the top-right menu and select Customize. At the bottom, select Bookmarks Toolbar and then Always Show from the Toolbars drop-down box. Click on the Done button.",
+        "Edge": "In your IE Browser, left-click on more icon and click on the Appearance option. Select Always on the Show favorites bar.",
+        "Safari": "In your Safari Browser, select View from the top left charms bar. From this drop-down menu, click the Show Status bar."
+    }
+
+    getContentBasedOnBrowser = () => {
+        // Get the user-agent string
+        let userAgentString =
+            navigator.userAgent;
+
+        // Detect Chrome
+        let chromeAgent =
+            userAgentString.indexOf("Chrome") > -1;
+
+        // Detect Internet Explorer
+        let edgeAgent =
+            userAgentString.indexOf("Edg") > -1
+
+        // Detect Firefox
+        let firefoxAgent =
+            userAgentString.indexOf("Firefox") > -1;
+
+        // Detect Safari
+        let safariAgent =
+            userAgentString.indexOf("Safari") > -1;
+
+        // Discard Safari since it also matches Chrome
+        if ((chromeAgent) && (safariAgent))
+            safariAgent = false;
+
+        if ((chromeAgent) && (safariAgent) && (edgeAgent)) {
+            safariAgent = false;
+            chromeAgent = false;
+        }
+
+        if (chromeAgent) {
+            return this.M_A_BUTTON_CONTENT["Chrome"];
+        } else if (safariAgent) {
+            return this.M_A_BUTTON_CONTENT["Safari"];
+        } else if (edgeAgent) {
+            return this.M_A_BUTTON_CONTENT["Edge"];
+        } else if (firefoxAgent) {
+            return this.M_A_BUTTON_CONTENT["Firefox"];
+        } else {
+            return this.M_A_BUTTON_CONTENT["Chrome"]
+        }
+    }
+
+    render() {
+        return (
+            <div className="settings-registry-ma-btn-detail">
+                {/* Registry Detail */}
+                <div className="ma-btn-section">
+                    <div className="settings-component-headers">
+                        <h3 className="d-inline-block mr-1">Get M+A Button</h3>
+                    </div>
+                </div>
+                <div className="row bookmarlet-setting-section justify-content-center">
+                    <div className="col">
+                        <div className="d-flex justify-content-center mb-5 align-items-center">
+                            <div className="text-body m-a-heading mr-5">
+                                <div>Drag the button to your</div> <div>browser’s Bookmarks bar</div>
+                            </div>
+                            <a
+                                tabindex="0"
+                                href={window.CONSTANTS.BOOKMARKLET_SCRIPT}
+                                onClick={(ev) => { ev.preventDefault() }}
+                                className="m-a-btn m-a-primary-btn primary-btn px-3 py-2 font-weight-bold font-medium text-body d-flex"
+                            ><i className="add-bookmarklet-btn-icon mr-1" />Add to M+A</a>
+                        </div>
+                        <div className="bookmarklet-steps">
+                            <ol className="my-5 order-list-bookmarklet">
+                                <li className="steps-title pl-4">
+                                    <div className="text-body font-medium">Make sure your bookmarks bar is visible</div>
+                                    <div className="mt-1 text-sm steps-details">
+                                        {this.getContentBasedOnBrowser()}
+                                    </div>
+                                </li>
+                                <li className="steps-title pl-4 mt-5">
+                                    <div className="text-body font-medium">Add to your Bookmarks bar</div>
+                                    <div className="mt-1 text-sm steps-details">
+                                        Click the “Add to M+A” button and drag it to your Bookmarks bar.</div>
+                                </li>
+                                <li className="steps-title pl-4 mt-5">
+                                    <div className="text-body font-medium">Give it a go!</div>
+                                    <div className="mt-1 text-sm steps-details">
+                                        Go to <a className="settings-link font-medium" href={window.CONSTANTS.BOOKMARKLET_STEP_THREE_PRODUCT_LINK} target='_blank' tabIndex="0">Key Rattle</a> on Plan Toys and click on your NEW M+A button.</div>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
 }
