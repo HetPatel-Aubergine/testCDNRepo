@@ -2986,9 +2986,9 @@ class BankDetail extends React.Component {
                                 </div>
                             }
                         >
-
+                            {/* {console.log(this.state.registry, (this.state.registry.isCashInLieuItemAdded || this.state.registry.isCashFundItemAdded) && this.state.registry.isPublic)} */}
                             {this.state.registry ?
-                                this.state.registry.isCashInLieuItemAdded || this.state.registry.isCashFundItemAdded ?
+                                (this.state.registry.isCashInLieuItemAdded || this.state.registry.isCashFundItemAdded) && this.state.registry.isPublic?
                                     <div>
                                         <h2>Remove bank account details</h2>
                                         <p className="text-sm mt-2">If you delete your bank account details, we will make your registry private. </p>
@@ -3149,6 +3149,7 @@ class MyDetail extends React.Component {
                         })
                         this.clearEditState();
                         toast("Details updated successfully.", "success")
+                        location.reload()
                     }
                     if (res.errors) {
                         this.myDetailApiCalled = false
@@ -4223,7 +4224,7 @@ class BookmarkletSection extends React.Component {
 
         // Detect Internet Explorer
         let edgeAgent =
-            userAgentString.indexOf("Edg") > -1
+            userAgentString.indexOf("Edg") > -1 || userAgentString.indexOf("Edge") > -1
 
         // Detect Firefox
         let firefoxAgent =
@@ -4237,7 +4238,7 @@ class BookmarkletSection extends React.Component {
         if ((chromeAgent) && (safariAgent))
             safariAgent = false;
 
-        if ((chromeAgent) && (safariAgent) && (edgeAgent)) {
+        if (edgeAgent) {
             safariAgent = false;
             chromeAgent = false;
         }
@@ -4293,7 +4294,7 @@ class BookmarkletSection extends React.Component {
                                 <li className="steps-title pl-4 mt-5">
                                     <div className="text-body font-medium">Give it a go!</div>
                                     <div className="mt-1 text-sm steps-details">
-                                        Go to <a className="settings-link font-medium" href={window.CONSTANTS.BOOKMARKLET_STEP_THREE_PRODUCT_LINK} target='_blank' tabIndex="0">Key Rattle</a> on Plan Toys and click on your NEW M+A button.</div>
+                                        Go to<a className="settings-link font-medium mx-1" href={window.CONSTANTS.BOOKMARKLET_STEP_THREE_PRODUCT_LINK} target='_blank' tabIndex="0">Key Rattle</a>on Plan Toys and click on your NEW M+A button.</div>
                                 </li>
                             </ol>
                         </div>
