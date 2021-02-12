@@ -4288,8 +4288,8 @@ class BookmarkletSection extends React.Component {
                                 </li>
                                 <li className="steps-title pl-4 mt-5">
                                     <div className="text-body font-medium">Add to your Bookmarks bar</div>
-                                    <div className="mt-1 text-sm steps-details">
-                                        Click the “Add to M+A” button and drag it to your Bookmarks bar.</div>
+                                    <div className="mt-1 text-sm steps-details d-flex">
+                                        Click the <span className="mx-1">“Add to M+A”</span> button and drag it to your Bookmarks bar.</div>
                                 </li>
                                 <li className="steps-title pl-4 mt-5">
                                     <div className="text-body font-medium">Give it a go!</div>
