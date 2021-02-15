@@ -923,6 +923,8 @@ class RegistryDetail extends React.Component {
                                         registryErrors: { registryLink: error.errors.url_slug }
                                     })
                                 }
+                            } else if (error.errors && error.errors.is_public){
+                                toast(error.errors.is_public[0], "error")
                             }
                         }
 
