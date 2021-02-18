@@ -609,4 +609,17 @@
   padding-right: 70px;
   padding-left: 70px;
 }
+
+.settings-registry-ma-btn-detail .icon-bookmarklet-up-arrow {
+  position: absolute;
+  height: 51px;
+  left: 100%;
+  bottom: 50%;
+  width: 82.3px;
+  display: block;
+  background-image: url("https://registry-cdn.monicaandandy.com/assets/bookmarklet-up-arrow.svg");
+  background-size: 82.3px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 /*# sourceMappingURL=settings.css.map */

@@ -4261,7 +4261,6 @@ class BookmarkletSection extends React.Component {
     render() {
         return (
             <div className="settings-registry-ma-btn-detail">
-                {/* Registry Detail */}
                 <div className="ma-btn-section">
                     <div className="settings-component-headers">
                         <h3 className="d-inline-block mr-1">Get M+A Button</h3>
@@ -4273,12 +4272,15 @@ class BookmarkletSection extends React.Component {
                             <div className="text-body m-a-heading mr-5">
                                 <div>Drag the button to your</div> <div>browser’s Bookmarks bar</div>
                             </div>
-                            <a
-                                tabindex="0"
-                                href={window.CONSTANTS.BOOKMARKLET_SCRIPT}
-                                onClick={(ev) => { ev.preventDefault() }}
-                                className="m-a-btn m-a-primary-btn primary-btn px-3 py-2 font-weight-bold font-medium text-body d-flex"
-                            ><i className="add-bookmarklet-btn-icon mr-1" />Add to M+A</a>
+                            <div className="position-relative">
+                                <a
+                                    tabindex="0"
+                                    href={window.CONSTANTS.BOOKMARKLET_SCRIPT}
+                                    onClick={(ev) => { ev.preventDefault() }}
+                                    className="m-a-btn m-a-primary-btn primary-btn px-3 py-2 font-weight-bold font-medium text-body d-flex"
+                                ><i className="add-bookmarklet-btn-icon mr-1" />Add to M+A</a>
+                                <i className="icon-bookmarklet-up-arrow" />
+                            </div>
                         </div>
                         <div className="bookmarklet-steps">
                             <ol className="my-5 order-list-bookmarklet">
@@ -4292,11 +4294,14 @@ class BookmarkletSection extends React.Component {
                                     <div className="text-body font-medium">Add to your Bookmarks bar</div>
                                     <div className="mt-1 text-sm steps-details d-flex">
                                         Click the <span className="mx-1">“Add to M+A”</span> button and drag it to your Bookmarks bar.</div>
+                                    <img className="w-100 mt-1"
+                                        src="https://registry-cdn.monicaandandy.com/assets/bookmarklet-example.png"
+                                    />
                                 </li>
                                 <li className="steps-title pl-4 mt-5">
                                     <div className="text-body font-medium">Give it a go!</div>
                                     <div className="mt-1 text-sm steps-details">
-                                        Go to<a className="settings-link font-medium mx-1" href={window.CONSTANTS.BOOKMARKLET_STEP_THREE_PRODUCT_LINK} target='_blank' tabIndex="0">Key Rattle</a>on Plan Toys and click on your NEW M+A button.</div>
+                                        Go to&nbsp;<a className="settings-link font-medium" href={window.CONSTANTS.BOOKMARKLET_STEP_THREE_PRODUCT_LINK} target='_blank' tabIndex="0">Key Rattle</a>&nbsp;on Plan Toys and click on your NEW M+A button.</div>
                                 </li>
                             </ol>
                         </div>
