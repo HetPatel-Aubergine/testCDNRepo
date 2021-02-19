@@ -7,6 +7,22 @@
   margin-top: 36px;
 }
 
+@media screen and (max-width: 736px) {
+  .m-a-settings {
+    margin-top: 50px;
+  }
+}
+
+.m-a-settings .response-ma-sidebar-toggle {
+  position: absolute;
+  bottom: 100%;
+  left: 12px;
+  border: 1px solid #9fa1a4;
+  border-radius: 4px;
+  padding: 10px;
+  cursor: pointer;
+}
+
 .m-a-settings .settings-sidebar .settings-sidebar-section {
   margin-bottom: 36px;
 }
@@ -22,6 +38,50 @@
 
 .m-a-settings .settings-sidebar .settings-sidebar-section .settings-sidebar-link:hover {
   text-decoration: underline;
+}
+
+.m-a-settings .settings-sidebar .response-ma-sidebar-close {
+  display: none;
+  position: absolute;
+  right: 32px;
+  top: 29px;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 736px) {
+  .m-a-settings .settings-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    overflow-y: auto;
+    background: white;
+    padding: 36px 0 0 36px;
+    -webkit-transform: translateX(-100%);
+            transform: translateX(-100%);
+    -webkit-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+  }
+  .m-a-settings .settings-sidebar.opened {
+    -webkit-transform: translateX(0);
+            transform: translateX(0);
+  }
+  .m-a-settings .settings-sidebar.opened .response-ma-sidebar-close {
+    display: block;
+  }
+}
+
+.m-a-settings .ma-settings-main-content {
+  padding-bottom: 150px;
+}
+
+@media screen and (max-width: 736px) {
+  .m-a-settings .ma-settings-main-content {
+    padding-top: 20px;
+  }
 }
 
 .m-a-settings .settings-link {
@@ -127,7 +187,7 @@
 }
 
 .m-a-settings .checkbox .radio__label {
-  line-height: 0;
+  line-height: 1;
 }
 
 .m-a-settings .custom-select-input .custom-select-container {
@@ -185,15 +245,15 @@
 }
 
 .m-a-settings .custom-select-input .custom-select-trigger::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 8px;
   right: 12px;
   height: 20px;
   width: 20px;
   background: #ffffff url("https://registry-cdn.monicaandandy.com/assets/icon_chevron-right.svg") no-repeat center;
-  -webkit-transition-duration: .4s;
-  transition-duration: .4s;
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
   -webkit-transition-property: -webkit-transform;
   transition-property: -webkit-transform;
   transition-property: transform;
@@ -388,7 +448,9 @@
   color: #4a4a4a;
 }
 
-.bank-detail-remove-button, .partner-account-remove-button, .registry-detail-inline-greeting-save-btn {
+.bank-detail-remove-button,
+.partner-account-remove-button,
+.registry-detail-inline-greeting-save-btn {
   color: #4a4a4a !important;
   padding: 6px 16px;
 }
@@ -455,7 +517,7 @@
   margin: 0;
 }
 
-.settings-input-container .settings-input[type=number] {
+.settings-input-container .settings-input[type="number"] {
   -moz-appearance: textfield;
 }
 
@@ -484,7 +546,8 @@
   border-color: #000000;
 }
 
-.settings-input-container .settings-input, .settings-input-container .settings-textarea {
+.settings-input-container .settings-input,
+.settings-input-container .settings-textarea {
   margin-top: 6px;
   padding: 8px 12px;
   border-radius: 4px;
@@ -493,7 +556,8 @@
   outline: none;
 }
 
-.settings-input-container .settings-input:disabled, .settings-input-container .settings-textarea:disabled {
+.settings-input-container .settings-input:disabled,
+.settings-input-container .settings-textarea:disabled {
   background-color: #ededee;
   border: none !important;
   color: #4a4a4a !important;
@@ -502,23 +566,30 @@
   pointer-events: revert !important;
 }
 
-.settings-input-container .settings-input::-webkit-input-placeholder, .settings-input-container .settings-textarea::-webkit-input-placeholder {
+.settings-input-container .settings-input::-webkit-input-placeholder,
+.settings-input-container .settings-textarea::-webkit-input-placeholder {
   color: #7e7f82;
 }
 
-.settings-input-container .settings-input:-ms-input-placeholder, .settings-input-container .settings-textarea:-ms-input-placeholder {
+.settings-input-container .settings-input:-ms-input-placeholder,
+.settings-input-container .settings-textarea:-ms-input-placeholder {
   color: #7e7f82;
 }
 
-.settings-input-container .settings-input::-ms-input-placeholder, .settings-input-container .settings-textarea::-ms-input-placeholder {
+.settings-input-container .settings-input::-ms-input-placeholder,
+.settings-input-container .settings-textarea::-ms-input-placeholder {
   color: #7e7f82;
 }
 
-.settings-input-container .settings-input::placeholder, .settings-input-container .settings-textarea::placeholder {
+.settings-input-container .settings-input::placeholder,
+.settings-input-container .settings-textarea::placeholder {
   color: #7e7f82;
 }
 
-.settings-input-container .settings-input:hover, .settings-input-container .settings-input:active, .settings-input-container .settings-input:focus, .settings-input-container .settings-textarea:hover, .settings-input-container .settings-textarea:active, .settings-input-container .settings-textarea:focus {
+.settings-input-container .settings-input:hover, .settings-input-container .settings-input:active, .settings-input-container .settings-input:focus,
+.settings-input-container .settings-textarea:hover,
+.settings-input-container .settings-textarea:active,
+.settings-input-container .settings-textarea:focus {
   border-color: #000000;
 }
 

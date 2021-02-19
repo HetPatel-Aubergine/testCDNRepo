@@ -1399,7 +1399,7 @@ class RegistryDetail extends React.Component {
                             <div className="edit-registry-detail">
 
                                 <div className="row">
-                                    <div className="col-7">
+                                    <div className="col-12 col-md-7">
                                         <div className="settings-input-container">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Registry Name</label>
                                             <input
@@ -1416,7 +1416,7 @@ class RegistryDetail extends React.Component {
                                 </div>
 
                                 <div className="row">
-                                    <div className="col-7">
+                                    <div className="col-12 col-md-7">
                                         <div className="settings-input-container input-container-margin">
                                             <div>
                                                 <label className="settings-input-label text-sm font-medium m-0 float-left">Add Greeting</label>
@@ -1456,7 +1456,7 @@ class RegistryDetail extends React.Component {
                                         </div>
                                     </div>
                                     <div className="col">
-                                        <a className="d-block settings-link text-body font-medium registry-detail-url-copy-link" data-disabled="false" href="#" onClick={(ev) => this.copyRegistryUrl(ev)}>Copy</a>
+                                        <a className="d-block settings-link text-body font-medium registry-detail-url-copy-link mr-2 mr-md-0" data-disabled="false" href="#" onClick={(ev) => this.copyRegistryUrl(ev)}>Copy</a>
                                     </div>
                                 </div>
 
@@ -1627,7 +1627,7 @@ class RegistryDetail extends React.Component {
                                                 : null}
                                         </div>
                                     </div>
-                                    <div className="col-3">
+                                    <div className="col-4 col-md--3">
                                         <div className="settings-input-container">
                                             <label className="settings-input-label text-sm font-medium settings-input-required m-0">No. of Children</label>
                                             <div className="custom-select-input">
@@ -2657,7 +2657,7 @@ class BankDetail extends React.Component {
 
                                 <div className="row">
 
-                                    <div className="col-6">
+                                    <div className="col-12 col-md-6">
                                         <div className="settings-input-container">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Bank Account Type</label>
                                             <div className="custom-select-input">
@@ -2678,7 +2678,7 @@ class BankDetail extends React.Component {
                                                 : null}
                                         </div>
                                     </div>
-                                    <div className="col-6">
+                                    <div className="col-12 col-md-6 mt-4 mt-md-0">
                                         <div className="settings-input-container ">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Routing Number {`(${this.ROUTING_NUMBER_LENGTH} digits)`}</label>
                                             <input
@@ -2697,7 +2697,7 @@ class BankDetail extends React.Component {
                                 </div>
 
                                 <div className="row">
-                                    <div className="col-6">
+                                    <div className="col-12 col-md-6">
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Account Number {`(${this.MIN_ACCOUNT_NUMBER_LENGTH}-${this.MAX_ACCOUNT_NUMBER_LENGTH} digits)`}</label>
                                             <input
@@ -2713,7 +2713,7 @@ class BankDetail extends React.Component {
                                                 : null}
                                         </div>
                                     </div>
-                                    <div className="col-6">
+                                    <div className="col-12 col-md-6">
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Confirm Account Number {`(${this.MIN_ACCOUNT_NUMBER_LENGTH}-${this.MAX_ACCOUNT_NUMBER_LENGTH} digits)`}</label>
                                             <input
@@ -2733,7 +2733,7 @@ class BankDetail extends React.Component {
                                 </div>
 
                                 <div className="row">
-                                    <div className="col-6">
+                                    <div className="col-12 col-md-6">
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">First Name</label>
                                             <input
@@ -2749,7 +2749,7 @@ class BankDetail extends React.Component {
                                                 : null}
                                         </div>
                                     </div>
-                                    <div className="col-6">
+                                    <div className="col-12 col-md-6">
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Last Name</label>
                                             <input
@@ -2769,7 +2769,7 @@ class BankDetail extends React.Component {
 
 
                                 <div className="row">
-                                    <div className="col-6">
+                                    <div className="col-12 col-md-6">
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Address Line 1</label>
                                             <input
@@ -2785,7 +2785,7 @@ class BankDetail extends React.Component {
                                                 : null}
                                         </div>
                                     </div>
-                                    <div className="col-6">
+                                    <div className="col-12 col-md-6">
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label text-sm font-medium m-0">Address Line 2</label>
                                             <input
@@ -2804,7 +2804,7 @@ class BankDetail extends React.Component {
                                 </div>
 
                                 <div className="row">
-                                    <div className="col-6">
+                                    <div className="col-12 col-md-6">
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">City</label>
                                             <input
@@ -2820,7 +2820,7 @@ class BankDetail extends React.Component {
                                                 : null}
                                         </div>
                                     </div>
-                                    <div className="col-6">
+                                    <div className="col-12 col-md-6">
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Country</label>
                                             <input
@@ -2837,7 +2837,7 @@ class BankDetail extends React.Component {
                                 </div>
 
                                 <div className="row">
-                                    <div className="col-6">
+                                    <div className="col-12 col-md-6">
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">State / Province</label>
                                             {/* TODO: Change this to State/Province Dropdown */}
@@ -2867,7 +2867,7 @@ class BankDetail extends React.Component {
                                                 : null}
                                         </div>
                                     </div>
-                                    <div className="col-6">
+                                    <div className="col-12 col-md-6">
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Postal / Zip Code</label>
                                             <input
@@ -2887,7 +2887,7 @@ class BankDetail extends React.Component {
                                 </div>
 
                                 <div className="row">
-                                    <div className="col-6">
+                                    <div className="col-12 col-md-6">
                                         <div className="settings-input-container input-container-margin">
                                             <label className="settings-input-label settings-input-required text-sm font-medium m-0">Phone</label>
                                             <input
@@ -2957,7 +2957,7 @@ class BankDetail extends React.Component {
                                 <div>
                                     {bankAccountDetail.map(detail => (
                                         <div className="row mt-2">
-                                            <div className="col-3">
+                                            <div className="col-5 col-md-3">
                                                 <p className="text-sm font-medium">{detail.label}</p>
                                             </div>
                                             <div className="col">
@@ -3212,7 +3212,7 @@ class MyDetail extends React.Component {
                         <div className="my-detail-account-edit">
 
                             <div className="row">
-                                <div className="col-6">
+                                <div className="col-12 col-md-6">
                                     <div className="settings-input-container">
                                         <label className="settings-input-label settings-input-required text-sm font-medium m-0">First Name</label>
                                         <input
@@ -3226,7 +3226,7 @@ class MyDetail extends React.Component {
                                             : null}
                                     </div>
                                 </div>
-                                <div className="col-6">
+                                <div className="col-12 col-md-6 mt-3 mt-md-0">
                                     <div className="settings-input-container">
                                         <label className="settings-input-label settings-input-required text-sm font-medium m-0">Last Name</label>
                                         <input
@@ -3243,7 +3243,7 @@ class MyDetail extends React.Component {
                             </div>
 
                             <div className="row">
-                                <div className="col-6">
+                                <div className="col-12 col-md-6">
                                     <div className="settings-input-container input-container-margin">
                                         <label className="settings-input-label settings-input-required text-sm font-medium m-0">Email</label>
                                         <input
@@ -4142,7 +4142,7 @@ class ShippingAddress extends React.Component {
                                             : null}
                                         {address.addressDetail.map(el => (
                                             <div className="row shipping-address-row">
-                                                <div className="col-3">
+                                                <div className="col-5 col-md-3">
                                                     <p className="text-sm font-medium">{el.label}</p>
                                                 </div>
                                                 <div className="col">
