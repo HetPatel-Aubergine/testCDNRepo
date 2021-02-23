@@ -1,8 +1,6 @@
 'use strict';
 
 // Common Variables
-import {BOOKMARKLET_STEP_THREE_PRODUCT_LINK} from "../src/utils/constants";
-import React from "react";
 
 var REGISTRY_PAGE = `${window.location.host}/pages/registry/`
 
