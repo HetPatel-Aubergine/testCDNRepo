@@ -1,6 +1,9 @@
 'use strict';
 
 // Common Variables
+import {BOOKMARKLET_STEP_THREE_PRODUCT_LINK} from "../src/utils/constants";
+import React from "react";
+
 var REGISTRY_PAGE = `${window.location.host}/pages/registry/`
 
 // List of Country and Province
@@ -4301,7 +4304,7 @@ class BookmarkletSection extends React.Component {
                                 <li className="steps-title pl-4 mt-5">
                                     <div className="text-body font-medium">Give it a go!</div>
                                     <div className="mt-1 text-sm steps-details">
-                                        Go to&nbsp;<a className="settings-link font-medium" href={window.CONSTANTS.BOOKMARKLET_STEP_THREE_PRODUCT_LINK} target='_blank' tabIndex="0">Key Rattle</a>&nbsp;on Plan Toys and click on your NEW M+A button.</div>
+                                      Go to the&nbsp;<a className="settings-link font-medium" href={window.CONSTANTS.BOOKMARKLET_STEP_THREE_PRODUCT_LINK} target='_blank' tabIndex="0">WubbaNub Elephant Pacifier</a>&nbsp;on target.com and click on your NEW M+A button.</div>
                                 </li>
                             </ol>
                         </div>

@@ -4,7 +4,7 @@ var CONSTANTS = {
     BACKEND_ENDPOINT: "https://registry-api.lilhathee.com",
     API_ENDPOINT_GRAPHQL: "https://registry-api.lilhathee.com/api/graphql",
     BOOKMARKLET_SCRIPT: "javascript:(function()%7Blet%20script%20%3D%20document.createElement('script')%3Bscript.src%20%3D%20'https%3A%2F%2Fregistry-api.lilhathee.com%2Fbookmarklet.js'%3Bdocument.body.appendChild(script)%7D)()",
-    BOOKMARKLET_STEP_THREE_PRODUCT_LINK: "https://usa.plantoys.com/en/product/key-rattle",
+    BOOKMARKLET_STEP_THREE_PRODUCT_LINK: "https://www.target.com/p/wubbanub-elephant-pacifier-gray/-/A-50806426",
 }
 
 // Queries
