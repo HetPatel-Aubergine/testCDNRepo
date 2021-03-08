@@ -1,3 +1,9 @@
+@media (max-width: 1023px) {
+  .nav {
+    display: none !important;
+  }
+}
+
 .m-a-settings-header {
   background-color: #ebfefe;
   padding: 21px 0px;
