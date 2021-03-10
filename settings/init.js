@@ -135,7 +135,7 @@ updateRegistryDetail = async () => {
             .then(res => {
                 if (res.data) {
                     // Success
-                    if (res.data.registrie && res.data.registries.edges && res.data.registries.edges.length > 0) {
+                    if (res.data.registries && res.data.registries.edges && res.data.registries.edges.length > 0) {
                         registryDetail = res.data.registries.edges[res.data.registries.edges.length - 1].node;
                         returnData = registryDetail;
                     }
