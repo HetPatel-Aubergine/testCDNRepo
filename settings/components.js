@@ -3378,7 +3378,7 @@ class ShippingAddress extends React.Component {
                                 country = { ...country }
                                 delete country.regions
                             }
-
+                            
                             stateAddresses.push({
                                 id: address.id,
                                 firstName: address.firstName,
@@ -3547,7 +3547,7 @@ class ShippingAddress extends React.Component {
             defaultValues['country'] = country ? country : {};
             defaultValues['stateProvince'] = province ? province : {};
             defaultValues['postalCode'] = address.zip ? address.zip : {};
-            defaultValues['phone'] = address.phone ? this.formatPhoneNumber(address.phone) : {};
+            defaultValues['phone'] = address.phone ? this.formatPhoneNumber(address.phone) : "";
             defaultValues['isDefault'] = address.isDefault;
             isDefaultAddress = address.isDefault;
         }
