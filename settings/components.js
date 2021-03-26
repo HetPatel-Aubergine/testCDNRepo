@@ -958,10 +958,18 @@ class RegistryDetail extends React.Component {
             errors['childrenCount'] = "This field is required"
             valid = false
         }
-
+        
         if (this.state.dueDate.length <= 0) {
             errors['dueDate'] = "This field is required"
             valid = false
+        } else {
+            let date = new Date(...this.state.dueDate.split("-"))
+            if (date) {
+                if (date.getFullYear() > 9999) {
+                    errors['dueDate'] = "Invalid date"
+                    valid = false
+                }
+            }
         }
 
         this.setState({
@@ -1621,7 +1629,9 @@ class RegistryDetail extends React.Component {
                                                 className={["settings-input text-body mw-100 w-100", this.state.childErrors.dueDate ? 'settings-input-error' : ''].join(" ")}
                                                 value={this.state.dueDate}
                                                 onChange={(ev) => this.childDueDateChangeHandler(ev)}
+                                                max="9999-12-31"
                                                 type="date"
+                                                onKeyDown={(e) => e.preventDefault()}
                                                 name="due-date" />
                                             {this.state.childErrors.dueDate ?
                                                 <label className="settings-input-error-message text-sm m-0">{this.state.childErrors.dueDate}</label>
